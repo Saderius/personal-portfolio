@@ -113,12 +113,8 @@
     -webkit-mask-composite: xor;
     mask-composite: exclude;
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: opacity 1.5s ease;
     pointer-events: none;
-  }
-
-  .glass-hover:hover::after {
-    opacity: 1;
     animation: 
       spin-a1 2.5s linear infinite,
       spin-a2 3.2s linear infinite,
@@ -127,6 +123,11 @@
       spin-a5 2.1s linear infinite,
       spin-a6 3.7s linear infinite,
       spin-a7 2.8s linear infinite;
+  }
+
+  .glass-hover:hover::after {
+    opacity: 1;
+    transition: opacity 0.2s ease;
   }
   
   .text-gradient {
