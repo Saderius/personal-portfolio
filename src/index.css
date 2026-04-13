@@ -1,0 +1,158 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: var(--bg-color);
+  --color-surface: var(--surface-color);
+  --color-surface-hover: var(--surface-hover);
+  --color-surface-border: var(--surface-border);
+  --color-primary: var(--primary-hex);
+  --color-primary-hover: var(--primary-hover-hex);
+  --color-secondary: var(--secondary-hex);
+  
+  --color-text-main: var(--text-main);
+  --color-text-muted: var(--text-muted);
+  --color-glass-icon: var(--glass-icon-bg);
+  --color-nav-active: var(--nav-bg-active);
+  --color-inverted: var(--inverted-bg);
+  --color-inverted-text: var(--inverted-text);
+  
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-display: 'Outfit', system-ui, sans-serif;
+}
+
+@layer base {
+  :root {
+    --bg-color: #0f1115;
+    --surface-color: rgba(255, 255, 255, 0.03);
+    --surface-hover: rgba(255, 255, 255, 0.08);
+    --surface-border: rgba(255, 255, 255, 0.1);
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --glass-icon-bg: rgba(255, 255, 255, 0.05);
+    --nav-bg-active: rgba(255, 255, 255, 0.1);
+    --inverted-bg: #ffffff;
+    --inverted-text: #000000;
+
+    /* Default Palette (Purple/Pink) */
+    --primary-hex: #8b5cf6;
+    --primary-rgb: 139, 92, 246;
+    --primary-hover-hex: #7c3aed;
+    --secondary-hex: #f472b6;
+    --secondary-rgb: 244, 114, 182;
+  }
+
+  .light {
+    --bg-color: #f8fafc;
+    --surface-color: rgba(0, 0, 0, 0.03);
+    --surface-hover: rgba(0, 0, 0, 0.08);
+    --surface-border: rgba(0, 0, 0, 0.1);
+    --text-main: #0f1115;
+    --text-muted: #475569;
+    --glass-icon-bg: rgba(0, 0, 0, 0.05);
+    --nav-bg-active: rgba(0, 0, 0, 0.1);
+    --inverted-bg: #0f1115;
+    --inverted-text: #ffffff;
+  }
+
+  .palette-green {
+    /* Grassy Green and Sky Blue */
+    --primary-hex: #22c55e;
+    --primary-rgb: 34, 197, 94;
+    --primary-hover-hex: #16a34a;
+    --secondary-hex: #0ea5e9;
+    --secondary-rgb: 14, 165, 233;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-text-main);
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+  }
+}
+
+@layer utilities {
+  .glass {
+    background: var(--color-surface);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--color-surface-border);
+  }
+  
+  .glass-hover {
+    position: relative;
+  }
+  
+  .glass-hover:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: scale(1.02);
+    box-shadow: 0 10px 40px -10px rgba(0,0,0,0.5);
+    z-index: 10;
+  }
+
+  .glass-hover::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: 
+      conic-gradient(from var(--a1), transparent 85%, rgba(var(--primary-rgb), 0.9) 100%),
+      conic-gradient(from var(--a2), transparent 80%, rgba(var(--secondary-rgb), 0.8) 95%, transparent 100%),
+      conic-gradient(from var(--a3), transparent 90%, rgba(var(--primary-rgb), 0.8) 98%, transparent 100%),
+      conic-gradient(from var(--a4), transparent 75%, rgba(var(--secondary-rgb), 0.7) 90%, transparent 100%),
+      conic-gradient(from var(--a5), transparent 88%, rgba(var(--primary-rgb), 0.9) 100%),
+      conic-gradient(from var(--a6), transparent 82%, rgba(var(--secondary-rgb), 0.8) 92%, transparent 100%),
+      conic-gradient(from var(--a7), transparent 85%, rgba(var(--primary-rgb), 0.85) 95%, transparent 100%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  .glass-hover:hover::after {
+    opacity: 1;
+    animation: 
+      spin-a1 2.5s linear infinite,
+      spin-a2 3.2s linear infinite,
+      spin-a3 1.8s linear infinite,
+      spin-a4 4.0s linear infinite,
+      spin-a5 2.1s linear infinite,
+      spin-a6 3.7s linear infinite,
+      spin-a7 2.8s linear infinite;
+  }
+  
+  .text-gradient {
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-image: linear-gradient(to right, var(--primary-hex), var(--secondary-hex));
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@property --a1 { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
+@property --a2 { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
+@property --a3 { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
+@property --a4 { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
+@property --a5 { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
+@property --a6 { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
+@property --a7 { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
+
+@keyframes spin-a1 { to { --a1: 360deg; } }
+@keyframes spin-a2 { to { --a2: -360deg; } }
+@keyframes spin-a3 { to { --a3: 360deg; } }
+@keyframes spin-a4 { to { --a4: -360deg; } }
+@keyframes spin-a5 { to { --a5: 360deg; } }
+@keyframes spin-a6 { to { --a6: -360deg; } }
+@keyframes spin-a7 { to { --a7: 360deg; } }
