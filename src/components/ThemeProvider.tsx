@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 type Theme = 'dark' | 'light';
-type Palette = 'default' | 'green';
+type Palette = 'default' | 'green' | 'dark-blue' | 'grey';
 
 type ThemeProviderProps = {
   children: React.ReactNode;
@@ -50,7 +50,7 @@ export function ThemeProvider({
 
   useEffect(() => {
     const root = window.document.documentElement;
-    root.classList.remove('palette-default', 'palette-green');
+    root.classList.remove('palette-default', 'palette-green', 'palette-dark-blue', 'palette-grey');
     root.classList.add(`palette-${palette}`);
   }, [palette]);
 

@@ -63,6 +63,24 @@
     --secondary-rgb: 14, 165, 233;
   }
 
+  .palette-dark-blue {
+    /* Dark Blue and Gold */
+    --primary-hex: #fbbf24;
+    --primary-rgb: 251, 191, 36;
+    --primary-hover-hex: #f59e0b;
+    --secondary-hex: #3b82f6;
+    --secondary-rgb: 59, 130, 246;
+  }
+
+  .palette-grey {
+    /* Grey and Light Grey */
+    --primary-hex: #9ca3af;
+    --primary-rgb: 156, 163, 175;
+    --primary-hover-hex: #d1d5db;
+    --secondary-hex: #6b7280;
+    --secondary-rgb: 107, 114, 128;
+  }
+
   body {
     background-color: var(--color-background);
     color: var(--color-text-main);
@@ -113,7 +131,7 @@
     -webkit-mask-composite: xor;
     mask-composite: exclude;
     opacity: 0;
-    transition: opacity 1.5s ease;
+    transition: opacity 5s ease;
     pointer-events: none;
     animation: 
       spin-a1 2.5s linear infinite,

@@ -6,6 +6,7 @@ import { projects, categories } from '@/src/data/projects';
 import { Button } from '@/src/components/ui/Button';
 import { Card, CardContent } from '@/src/components/ui/Card';
 import { cn } from '@/src/lib/utils';
+import { AlienGame } from '@/src/components/AlienGame';
 
 const categoryIcons: Record<string, React.ReactNode> = {
   games: <Gamepad2 className="w-6 h-6" />,
@@ -18,6 +19,7 @@ export function Home() {
   const [activeCategory, setActiveCategory] = useState<string>('active');
   const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
   const [visibleCount, setVisibleCount] = useState(9);
+  const [isGameActive, setIsGameActive] = useState(false);
 
   const handleCategoryChange = (id: string) => {
     setActiveCategory(id);
@@ -53,8 +55,11 @@ export function Home() {
   return (
     <div className="pt-32 pb-20">
       {/* Hero Section */}
-      <section className="container mx-auto px-4 md:px-6 mb-32">
-        <div className="max-w-4xl mx-auto text-center">
+      <section className="container mx-auto px-4 md:px-6 mb-16 relative min-h-[350px]">
+        <div className={cn(
+          "max-w-4xl mx-auto text-center transition-all duration-500",
+          isGameActive ? "opacity-0 scale-95 pointer-events-none absolute inset-x-0" : "opacity-100 scale-100"
+        )}>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass text-sm font-medium text-primary mb-6">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
@@ -85,6 +90,11 @@ export function Home() {
             </a>
           </div>
         </div>
+        
+        <AlienGame 
+          onGameStart={() => setIsGameActive(true)} 
+          onGameEnd={() => setIsGameActive(false)} 
+        />
       </section>
 
       {/* Featured Work Section with Content Picker */}
@@ -94,7 +104,7 @@ export function Home() {
           
           {/* Content Picker Nav */}
           <div className="flex flex-col sm:flex-row items-center gap-4">
-            <nav className="flex items-center gap-1 glass rounded-full px-2 py-1 overflow-x-auto no-scrollbar max-w-full">
+            <nav id="category-nav" className="flex items-center gap-1 glass glass-hover rounded-full px-2 py-1 overflow-x-auto no-scrollbar max-w-full">
               {navLinks.map((link) => (
                 <button
                   key={link.id}
@@ -113,7 +123,7 @@ export function Home() {
             
             <button
               onClick={() => setSortOrder(prev => prev === 'newest' ? 'oldest' : 'newest')}
-              className="px-4 py-2 rounded-full glass text-sm font-medium text-text-muted hover:text-text-main transition-colors whitespace-nowrap"
+              className="px-4 py-2 rounded-full glass glass-hover text-sm font-medium text-text-muted hover:text-text-main transition-colors whitespace-nowrap"
             >
               Sort: {sortOrder === 'newest' ? 'Newest First' : 'Oldest First'}
             </button>
@@ -137,7 +147,7 @@ export function Home() {
                         <div className="flex flex-col h-full overflow-hidden rounded-3xl">
                           {project.imageUrl && (
                             <div className="relative h-48 overflow-hidden shrink-0">
-                              <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-background to-transparent z-10" />
+                              <div className="absolute inset-x-0 -bottom-px h-16 bg-gradient-to-t from-background to-transparent z-10" />
                               <img 
                                 src={project.imageUrl} 
                                 alt={project.title} 

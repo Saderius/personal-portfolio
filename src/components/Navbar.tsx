@@ -18,6 +18,13 @@ export function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const cyclePalette = () => {
+    const palettes: ('default' | 'green' | 'dark-blue' | 'grey')[] = ['default', 'green', 'dark-blue', 'grey'];
+    const currentIndex = palettes.indexOf(palette as any);
+    const nextIndex = (currentIndex + 1) % palettes.length;
+    setPalette(palettes[nextIndex]);
+  };
+
   return (
     <header
       className={cn(
@@ -35,7 +42,7 @@ export function Navbar() {
 
         <div className="hidden md:flex items-center gap-3">
           <button
-            onClick={() => setPalette(palette === 'default' ? 'green' : 'default')}
+            onClick={cyclePalette}
             className="p-2 rounded-full glass glass-hover text-text-muted hover:text-text-main transition-all duration-300"
             aria-label="Toggle palette"
           >
@@ -62,7 +69,7 @@ export function Navbar() {
         {/* Mobile Menu Toggle */}
         <div className="flex items-center gap-2 md:hidden">
           <button
-            onClick={() => setPalette(palette === 'default' ? 'green' : 'default')}
+            onClick={cyclePalette}
             className="p-2 text-text-muted hover:text-text-main"
             aria-label="Toggle palette"
           >

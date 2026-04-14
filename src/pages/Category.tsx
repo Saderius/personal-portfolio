@@ -43,7 +43,7 @@ export function Category() {
               <div className="flex flex-col h-full overflow-hidden rounded-3xl">
                 {project.imageUrl && (
                   <div className="relative h-48 overflow-hidden">
-                    <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-background to-transparent z-10" />
+                    <div className="absolute inset-x-0 -bottom-px h-16 bg-gradient-to-t from-background to-transparent z-10" />
                     <img 
                       src={project.imageUrl} 
                       alt={project.title} 

@@ -1,5 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useTheme } from './ThemeProvider';
+import { Tracer } from '../lib/canvas/Tracer';
+import { GridNodes } from '../lib/canvas/GridNodes';
 
 export function Background() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -34,31 +36,37 @@ export function Background() {
     const isLight = theme === 'light';
     const gridColor = isLight ? 'rgba(0, 0, 0, 0.03)' : 'rgba(255, 255, 255, 0.03)';
     
-    const primaryColor = palette === 'green' ? '34, 197, 94' : '139, 92, 246';
-    const secondaryColor = palette === 'green' ? '14, 165, 233' : '244, 114, 182';
+    let primaryColor = '139, 92, 246'; // default
+    let secondaryColor = '244, 114, 182'; // default
+    
+    if (palette === 'green') {
+      primaryColor = '34, 197, 94';
+      secondaryColor = '14, 165, 233';
+    } else if (palette === 'dark-blue') {
+      primaryColor = '251, 191, 36';
+      secondaryColor = '59, 130, 246';
+    } else if (palette === 'grey') {
+      primaryColor = '156, 163, 175';
+      secondaryColor = '107, 114, 128';
+    }
 
-    // Function to create a tracer on a grid line near the mouse
-    const createTracer = () => {
-      const isVertical = Math.random() > 0.5;
-      // Pick a grid line near the target mouse
-      const offset = (Math.floor(Math.random() * (glowRadius * 2 / cellSize)) * cellSize) - Math.floor(glowRadius / cellSize) * cellSize;
+    // Pool of active tracers (increased count since they are now global)
+    let tracers = Array.from({ length: 150 }).map(() => new Tracer(canvas.width, canvas.height, primaryColor, secondaryColor));
+    const gridNodes = new GridNodes();
+    let ripples: {x: number, y: number, scale: number, opacity: number}[] = [];
+
+    const onMouseClick = (e: MouseEvent) => {
+      const cellX = Math.floor(e.clientX / cellSize) * cellSize;
+      const cellY = Math.floor(e.clientY / cellSize) * cellSize;
       
-      return {
-        isVertical,
-        lineIndex: isVertical 
-          ? Math.round(targetMouse.x / cellSize) * cellSize + offset 
-          : Math.round(targetMouse.y / cellSize) * cellSize + offset,
-        pos: isVertical 
-          ? targetMouse.y + (Math.random() * glowRadius * 2 - glowRadius) 
-          : targetMouse.x + (Math.random() * glowRadius * 2 - glowRadius),
-        speed: (Math.random() * 6 + 3) * (Math.random() > 0.5 ? 1 : -1),
-        length: Math.random() * 100 + 40,
-        color: Math.random() > 0.5 ? primaryColor : secondaryColor
-      };
-    };
+      ripples.push({ x: cellX, y: cellY, scale: 1, opacity: 1 });
 
-    // Pool of active tracers
-    const tracers = Array.from({ length: 60 }).map(createTracer);
+      const numBurst = Math.floor(Math.random() * 5) + 3; // 3 to 7
+      for (let i = 0; i < numBurst; i++) {
+        tracers.push(new Tracer(canvas.width, canvas.height, primaryColor, secondaryColor, true, e.clientX, e.clientY));
+      }
+    };
+    window.addEventListener('mousedown', onMouseClick);
 
     const draw = () => {
       // Smooth mouse interpolation
@@ -67,24 +75,27 @@ export function Background() {
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+      const offsetX = 0;
+      const offsetY = 0;
+
       // 1. Base Grid (very faint)
       ctx.strokeStyle = gridColor;
       ctx.lineWidth = 1;
       ctx.beginPath();
-      for (let x = 0; x <= canvas.width; x += cellSize) {
+      for (let x = offsetX; x <= canvas.width; x += cellSize) {
         ctx.moveTo(x, 0);
         ctx.lineTo(x, canvas.height);
       }
-      for (let y = 0; y <= canvas.height; y += cellSize) {
+      for (let y = offsetY; y <= canvas.height; y += cellSize) {
         ctx.moveTo(0, y);
         ctx.lineTo(canvas.width, y);
       }
       ctx.stroke();
 
-      const nearestX = Math.round(mouse.x / cellSize) * cellSize;
-      const nearestY = Math.round(mouse.y / cellSize) * cellSize;
-      const cellX = Math.floor(mouse.x / cellSize) * cellSize;
-      const cellY = Math.floor(mouse.y / cellSize) * cellSize;
+      const nearestX = Math.round((mouse.x - offsetX) / cellSize) * cellSize + offsetX;
+      const nearestY = Math.round((mouse.y - offsetY) / cellSize) * cellSize + offsetY;
+      const cellX = Math.floor((mouse.x - offsetX) / cellSize) * cellSize + offsetX;
+      const cellY = Math.floor((mouse.y - offsetY) / cellSize) * cellSize + offsetY;
 
       // 2. Illuminated Grid near mouse
       const gridGlowGradient = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, glowRadius);
@@ -94,18 +105,22 @@ export function Background() {
       ctx.strokeStyle = gridGlowGradient;
       ctx.beginPath();
       
-      const startX = Math.max(0, Math.floor((mouse.x - glowRadius) / cellSize) * cellSize);
-      const endX = Math.min(canvas.width, Math.ceil((mouse.x + glowRadius) / cellSize) * cellSize);
-      const startY = Math.max(0, Math.floor((mouse.y - glowRadius) / cellSize) * cellSize);
-      const endY = Math.min(canvas.height, Math.ceil((mouse.y + glowRadius) / cellSize) * cellSize);
+      const startX = Math.floor((mouse.x - glowRadius - offsetX) / cellSize) * cellSize + offsetX;
+      const endX = Math.ceil((mouse.x + glowRadius - offsetX) / cellSize) * cellSize + offsetX;
+      const startY = Math.floor((mouse.y - glowRadius - offsetY) / cellSize) * cellSize + offsetY;
+      const endY = Math.ceil((mouse.y + glowRadius - offsetY) / cellSize) * cellSize + offsetY;
 
       for (let x = startX; x <= endX; x += cellSize) {
-        ctx.moveTo(x, startY);
-        ctx.lineTo(x, endY);
+        if (x >= 0 && x <= canvas.width) {
+          ctx.moveTo(x, Math.max(0, startY));
+          ctx.lineTo(x, Math.min(canvas.height, endY));
+        }
       }
       for (let y = startY; y <= endY; y += cellSize) {
-        ctx.moveTo(startX, y);
-        ctx.lineTo(endX, y);
+        if (y >= 0 && y <= canvas.height) {
+          ctx.moveTo(Math.max(0, startX), y);
+          ctx.lineTo(Math.min(canvas.width, endX), y);
+        }
       }
       ctx.stroke();
 
@@ -130,56 +145,39 @@ export function Background() {
       // Bottom Right
       ctx.beginPath(); ctx.moveTo(cellX + cellSize - cornerSize, cellY + cellSize); ctx.lineTo(cellX + cellSize, cellY + cellSize); ctx.lineTo(cellX + cellSize, cellY + cellSize - cornerSize); ctx.stroke();
 
-      // 5. Grid Nodes (intersections light up near mouse)
-      ctx.fillStyle = `rgba(${secondaryColor}, 0.6)`;
-      for (let x = startX; x <= endX; x += cellSize) {
-        for (let y = startY; y <= endY; y += cellSize) {
-          const dist = Math.hypot(x - mouse.x, y - mouse.y);
-          if (dist < glowRadius) {
-            const size = 1.5 * (1 - dist / glowRadius);
-            ctx.fillRect(x - size, y - size, size * 2, size * 2);
-          }
+      // Draw Ripples
+      for (let i = ripples.length - 1; i >= 0; i--) {
+        const r = ripples[i];
+        r.scale += 0.05;
+        r.opacity -= 0.03;
+        
+        if (r.opacity <= 0) {
+          ripples.splice(i, 1);
+          continue;
         }
+
+        ctx.strokeStyle = `rgba(${primaryColor}, ${r.opacity})`;
+        ctx.lineWidth = 2;
+        
+        const size = cellSize * r.scale;
+        const offset = (size - cellSize) / 2;
+        const rx = r.x - offset;
+        const ry = r.y - offset;
+        const rCornerSize = 8 * r.scale;
+
+        ctx.beginPath(); ctx.moveTo(rx, ry + rCornerSize); ctx.lineTo(rx, ry); ctx.lineTo(rx + rCornerSize, ry); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(rx + size - rCornerSize, ry); ctx.lineTo(rx + size, ry); ctx.lineTo(rx + size, ry + rCornerSize); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(rx, ry + size - rCornerSize); ctx.lineTo(rx, ry + size); ctx.lineTo(rx + rCornerSize, ry + size); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(rx + size - rCornerSize, ry + size); ctx.lineTo(rx + size, ry + size); ctx.lineTo(rx + size, ry + size - rCornerSize); ctx.stroke();
       }
 
-      // 6. Grid Tracers (Data streams strictly on grid lines)
-      tracers.forEach(tracer => {
-        tracer.pos += tracer.speed;
-        
-        const x = tracer.isVertical ? tracer.lineIndex : tracer.pos;
-        const y = tracer.isVertical ? tracer.pos : tracer.lineIndex;
+      // 5. Grid Nodes (intersections light up near mouse and fade out slowly)
+      gridNodes.updateAndDraw(ctx, canvas.width, canvas.height, mouse.x, mouse.y, glowRadius, secondaryColor);
 
-        const distToMouse = Math.hypot(
-          Math.max(x, Math.min(mouse.x, x + (tracer.isVertical ? 0 : tracer.length))) - mouse.x,
-          Math.max(y, Math.min(mouse.y, y + (tracer.isVertical ? tracer.length : 0))) - mouse.y
-        );
-
-        // If tracer leaves the glow radius, respawn it near the mouse
-        if (distToMouse > glowRadius * 1.2) {
-          Object.assign(tracer, createTracer());
-        } else {
-          const opacity = Math.max(0, 1 - (distToMouse / glowRadius));
-          
-          const gradient = ctx.createLinearGradient(
-            x, y, 
-            tracer.isVertical ? x : x + tracer.length, 
-            tracer.isVertical ? y + tracer.length : y
-          );
-          gradient.addColorStop(0, `rgba(${tracer.color}, 0)`);
-          gradient.addColorStop(0.5, `rgba(${tracer.color}, ${opacity})`);
-          gradient.addColorStop(1, `rgba(${tracer.color}, 0)`);
-
-          ctx.strokeStyle = gradient;
-          ctx.lineWidth = 2;
-          ctx.beginPath();
-          ctx.moveTo(x, y);
-          ctx.lineTo(
-            tracer.isVertical ? x : x + tracer.length,
-            tracer.isVertical ? y + tracer.length : y
-          );
-          ctx.stroke();
-        }
-      });
+      // 6. Grid Tracers (Data streams decoupled from mouse, fade in fast, fade out slowly)
+      tracers = tracers.filter(tracer => 
+        tracer.update(ctx, canvas.width, canvas.height, mouse.x, mouse.y, glowRadius, primaryColor, secondaryColor)
+      );
 
       // 7. Ambient Mouse Glow
       const ambientGlow = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, glowRadius);
@@ -196,6 +194,7 @@ export function Background() {
     return () => {
       window.removeEventListener('resize', resize);
       window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mousedown', onMouseClick);
       cancelAnimationFrame(animationFrameId);
     };
   }, [theme, palette]);
