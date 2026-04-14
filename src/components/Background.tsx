@@ -16,10 +16,16 @@ export function Background() {
     let animationFrameId: number;
     let mouse = { x: -1000, y: -1000 };
     let targetMouse = { x: -1000, y: -1000 };
+    let offsetX = 0;
+    let offsetY = 0;
+    const cellSize = 50;
 
     const resize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
+      // Center the grid perfectly on the screen
+      offsetX = (canvas.width % cellSize) / 2;
+      offsetY = (canvas.height % cellSize) / 2;
     };
     window.addEventListener('resize', resize);
     resize();
@@ -30,11 +36,10 @@ export function Background() {
     };
     window.addEventListener('mousemove', onMouseMove);
 
-    const cellSize = 50;
     const glowRadius = 300;
 
     const isLight = theme === 'light';
-    const gridColor = isLight ? 'rgba(0, 0, 0, 0.03)' : 'rgba(255, 255, 255, 0.03)';
+    const gridColorRgb = isLight ? '0, 0, 0' : '255, 255, 255';
     
     let primaryColor = '139, 92, 246'; // default
     let secondaryColor = '244, 114, 182'; // default
@@ -56,8 +61,8 @@ export function Background() {
     let ripples: {x: number, y: number, scale: number, opacity: number}[] = [];
 
     const onMouseClick = (e: MouseEvent) => {
-      const cellX = Math.floor(e.clientX / cellSize) * cellSize;
-      const cellY = Math.floor(e.clientY / cellSize) * cellSize;
+      const cellX = Math.floor((e.clientX - offsetX) / cellSize) * cellSize + offsetX;
+      const cellY = Math.floor((e.clientY - offsetY) / cellSize) * cellSize + offsetY;
       
       ripples.push({ x: cellX, y: cellY, scale: 1, opacity: 1 });
 
@@ -74,12 +79,17 @@ export function Background() {
       mouse.y += (targetMouse.y - mouse.y) * 0.15;
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // 1. Base Grid (fades out towards edges for a clean, centered look)
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
+      const fadeRadius = Math.max(canvas.width, canvas.height) * 0.6;
+      
+      const baseGridGradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, fadeRadius);
+      baseGridGradient.addColorStop(0, `rgba(${gridColorRgb}, 0.06)`);
+      baseGridGradient.addColorStop(1, `rgba(${gridColorRgb}, 0)`);
 
-      const offsetX = 0;
-      const offsetY = 0;
-
-      // 1. Base Grid (very faint)
-      ctx.strokeStyle = gridColor;
+      ctx.strokeStyle = baseGridGradient;
       ctx.lineWidth = 1;
       ctx.beginPath();
       for (let x = offsetX; x <= canvas.width; x += cellSize) {
