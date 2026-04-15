@@ -23,7 +23,6 @@ export function AlienGame({ onGameStart, onGameEnd }: AlienGameProps) {
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const gameContainerRef = useRef<HTMLDivElement>(null);
   const boundsRef = useRef<HTMLDivElement>(null);
-  const transformRef = useRef({ x: 0, y: 0 });
 
   const updateGrid = () => {
     const clientWidth = document.documentElement.clientWidth;
@@ -32,60 +31,58 @@ export function AlienGame({ onGameStart, onGameEnd }: AlienGameProps) {
     const availableWidth = clientWidth - 40; // 20px padding on sides
     const availableHeight = clientHeight - 250; // Leave space for header/UI and roulette
     
-    const cols = Math.max(1, Math.min(10, Math.floor(availableWidth / CELL_SIZE)));
-    const rows = Math.max(1, Math.min(10, Math.floor(availableHeight / CELL_SIZE)));
+    let cols = Math.max(1, Math.min(10, Math.floor(availableWidth / CELL_SIZE)));
+    let rows = Math.max(1, Math.min(10, Math.floor(availableHeight / CELL_SIZE)));
+
+    // Force cols to be odd so it perfectly aligns with the centered background grid horizontally
+    if (cols % 2 === 0) cols -= 1;
 
     const grid = { left: 0, top: 0, width: cols * CELL_SIZE, height: rows * CELL_SIZE, cols, rows };
     setGameGrid(grid);
     return grid;
   };
 
-  const alignGridToBackground = () => {
-    if (!gameContainerRef.current || !boundsRef.current) return;
-    
-    const boundsRect = boundsRef.current.getBoundingClientRect();
-    
-    // Calculate the base layout position by subtracting the current transform
-    const baseLeft = boundsRect.left - transformRef.current.x;
-    const baseTop = boundsRect.top - transformRef.current.y;
-    
-    // Snap to the nearest 50px (CELL_SIZE) to match the background grid perfectly
-    const snappedLeft = Math.round(baseLeft / CELL_SIZE) * CELL_SIZE;
-    const snappedTop = Math.round(baseTop / CELL_SIZE) * CELL_SIZE;
-    
-    const translateX = snappedLeft - baseLeft;
-    const translateY = snappedTop - baseTop;
-    
-    // Only update DOM if it changed to avoid unnecessary repaints
-    if (translateX !== transformRef.current.x || translateY !== transformRef.current.y) {
-      transformRef.current = { x: translateX, y: translateY };
-      boundsRef.current.style.transform = `translate(${translateX}px, ${translateY}px)`;
-    }
-  };
-
   useEffect(() => {
-    alignGridToBackground();
-  }, [gameGrid.width, gameGrid.height]);
-
-  useEffect(() => {
-    const handleScrollOrResize = () => {
+    const handleResize = () => {
       if (gameState !== 'idle') {
-        alignGridToBackground();
+        updateGrid();
       }
     };
     
-    // Use passive listeners for better scrolling performance
-    window.addEventListener('scroll', handleScrollOrResize, { passive: true });
-    window.addEventListener('resize', handleScrollOrResize, { passive: true });
-    
-    // Initial alignment
-    handleScrollOrResize();
+    window.addEventListener('resize', handleResize, { passive: true });
     
     return () => {
-      window.removeEventListener('scroll', handleScrollOrResize);
-      window.removeEventListener('resize', handleScrollOrResize);
+      window.removeEventListener('resize', handleResize);
     };
-  }, [gameState, gameGrid.width, gameGrid.height]);
+  }, [gameState]);
+
+  // Dispatch custom event when ghost hits the floor (halfway through the 1s bounce animation)
+  useEffect(() => {
+    if (gameState !== 'idle') return;
+
+    const ghost = document.getElementById('ghost-icon');
+    if (!ghost) return;
+
+    let timeoutId: NodeJS.Timeout;
+
+    const triggerHit = () => {
+      // The 'animate-bounce' class takes 1 second.
+      // It hits the bottom at exactly 50% (500ms).
+      timeoutId = setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('ghost-hit-floor'));
+      }, 500);
+    };
+
+    // Trigger on first start and every subsequent iteration
+    ghost.addEventListener('animationstart', triggerHit);
+    ghost.addEventListener('animationiteration', triggerHit);
+
+    return () => {
+      ghost.removeEventListener('animationstart', triggerHit);
+      ghost.removeEventListener('animationiteration', triggerHit);
+      clearTimeout(timeoutId);
+    };
+  }, [gameState]);
 
   const startGame = () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -136,12 +133,50 @@ export function AlienGame({ onGameStart, onGameEnd }: AlienGameProps) {
   const scheduleNextSpawn = (index: number, spawns: {x:number, y:number}[], isFirst: boolean = false) => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     
+    if (!boundsRef.current) return;
+    
+    const boundsRect = boundsRef.current.getBoundingClientRect();
+    const docLeft = boundsRect.left + window.scrollX;
+    const docTop = boundsRect.top + window.scrollY;
+    
+    const clientWidth = document.documentElement.clientWidth;
+    const clientHeight = window.innerHeight;
+    const centerX = clientWidth / 2;
+    const centerY = clientHeight / 2;
+    
+    // Background grid anchor points
+    const anchorX = centerX - CELL_SIZE / 2;
+    const anchorY = centerY - CELL_SIZE / 2;
+    
+    // Find the range of full background cells that fit inside the outline
+    const minK = Math.ceil((docLeft - anchorX) / CELL_SIZE);
+    const maxK = Math.floor((docLeft + gameGrid.width - anchorX) / CELL_SIZE) - 1;
+    
+    const minM = Math.ceil((docTop - anchorY) / CELL_SIZE);
+    const maxM = Math.floor((docTop + gameGrid.height - anchorY) / CELL_SIZE) - 1;
+    
+    const validCols = Math.max(1, maxK - minK + 1);
+    const validRows = Math.max(1, maxM - minM + 1);
+    
     const delay = isFirst 
       ? 500 + Math.random() * 1500 // 0.5s to 2s
       : 200 + Math.random() * 300; // 200ms to 500ms
     
     timeoutRef.current = setTimeout(() => {
-      setAlienPos(spawns[index]);
+      // Pick a random valid cell
+      const rCol = Math.floor(Math.random() * validCols);
+      const rRow = Math.floor(Math.random() * validRows);
+      
+      const k = minK + rCol;
+      const m = minM + rRow;
+      
+      // Calculate position relative to the boundsRef element
+      const nextPos = {
+        x: (anchorX + k * CELL_SIZE + CELL_SIZE / 2) - docLeft,
+        y: (anchorY + m * CELL_SIZE + CELL_SIZE / 2) - docTop
+      };
+      
+      setAlienPos(nextPos);
       setSpawnIndex(index);
       setGameState('active');
     }, delay);
@@ -225,7 +260,7 @@ export function AlienGame({ onGameStart, onGameEnd }: AlienGameProps) {
     <>
       {gameState === 'idle' && (
         <div className="flex flex-col items-center justify-center mt-8 cursor-pointer group" onClick={handleAlienClick}>
-          <div className="glass p-4 rounded-full group-hover:bg-primary/20 group-hover:border-primary/50 transition-all duration-300 animate-bounce">
+          <div id="ghost-icon" className="glass p-4 rounded-full group-hover:bg-primary/20 group-hover:border-primary/50 transition-all duration-300 animate-bounce">
             <Ghost className="w-8 h-8 text-primary" />
           </div>
           <div className="flex flex-col items-center mt-4 opacity-0 group-hover:opacity-100 transition-opacity">

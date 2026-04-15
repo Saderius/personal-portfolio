@@ -7,6 +7,6 @@ category: "python"
 link: "https://github.com/nukeknurs/Castle-Stalker"
 github: "https://github.com/nukeknurs/Castle-Stalker"
 tags: ["Python", "Game", "Scripting"]
-featured: true
+featured: false
 date: "2023-09-15"
 ---

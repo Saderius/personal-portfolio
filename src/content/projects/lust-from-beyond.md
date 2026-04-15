@@ -4,7 +4,7 @@ description: "A psychological horror with occult and erotic themes. Contributed 
 category: "games"
 link: "https://store.steampowered.com/app/1035120/Lust_from_Beyond/"
 tags: ["Manual QA Tester", "Horror", "Psychological"]
-featured: false
+featured: true
 imageUrl: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/1035120/capsule_616x353.jpg"
 date: "2021-03-11"
 status: "concluded"

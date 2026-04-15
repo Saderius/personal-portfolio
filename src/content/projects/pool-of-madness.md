@@ -7,5 +7,5 @@ link: "https://store.steampowered.com/app/2873750/Pool_of_Madness/"
 tags: ["Manual QA Tester", "Indie", "Lovecraftian"]
 featured: true
 imageUrl: "https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/2873750/capsule_616x353.jpg"
-date: "2024-01-01"
+date: "2026-03-01"
 ---

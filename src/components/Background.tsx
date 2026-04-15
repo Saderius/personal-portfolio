@@ -23,9 +23,14 @@ export function Background() {
     const resize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-      // Center the grid perfectly on the screen
-      offsetX = (canvas.width % cellSize) / 2;
-      offsetY = (canvas.height % cellSize) / 2;
+      
+      const clientWidth = document.documentElement.clientWidth;
+      const clientHeight = window.innerHeight;
+      const centerX = clientWidth / 2;
+      const centerY = clientHeight / 2;
+      
+      offsetX = (centerX % cellSize) - (cellSize / 2);
+      offsetY = (centerY % cellSize) - (cellSize / 2);
     };
     window.addEventListener('resize', resize);
     resize();
@@ -37,26 +42,32 @@ export function Background() {
     window.addEventListener('mousemove', onMouseMove);
 
     const glowRadius = 300;
-
-    const isLight = theme === 'light';
-    const gridColorRgb = isLight ? '0, 0, 0' : '255, 255, 255';
     
+    // Read dynamic colors from CSS variables
     let primaryColor = '139, 92, 246'; // default
     let secondaryColor = '244, 114, 182'; // default
+
+    const updateColors = () => {
+      const rootStyles = getComputedStyle(document.documentElement);
+      const p = rootStyles.getPropertyValue('--primary-rgb').trim();
+      const s = rootStyles.getPropertyValue('--secondary-rgb').trim();
+      if (p) primaryColor = p;
+      if (s) secondaryColor = s;
+    };
     
-    if (palette === 'green') {
-      primaryColor = '34, 197, 94';
-      secondaryColor = '14, 165, 233';
-    } else if (palette === 'dark-blue') {
-      primaryColor = '251, 191, 36';
-      secondaryColor = '59, 130, 246';
-    } else if (palette === 'grey') {
-      primaryColor = '156, 163, 175';
-      secondaryColor = '107, 114, 128';
-    }
+    updateColors();
 
     // Pool of active tracers (increased count since they are now global)
     let tracers = Array.from({ length: 150 }).map(() => new Tracer(canvas.width, canvas.height, primaryColor, secondaryColor));
+    
+    // The ThemeProvider might update CSS variables slightly after this effect runs.
+    // We check again after a short delay to ensure we have the correct colors.
+    const colorTimeout = setTimeout(() => {
+      updateColors();
+      tracers.forEach(t => {
+        t.color = Math.random() > 0.5 ? primaryColor : secondaryColor;
+      });
+    }, 50);
     const gridNodes = new GridNodes();
     let ripples: {x: number, y: number, scale: number, opacity: number}[] = [];
 
@@ -73,6 +84,31 @@ export function Background() {
     };
     window.addEventListener('mousedown', onMouseClick);
 
+    const onGhostHitFloor = () => {
+      if (!canvas) return;
+      let centerX = canvas.width / 2;
+      let centerY = canvas.height / 2;
+      
+      const ghostEl = document.getElementById('ghost-icon');
+      if (ghostEl) {
+        const rect = ghostEl.getBoundingClientRect();
+        centerX = rect.left + rect.width / 2;
+        centerY = rect.top + rect.height / 2;
+      }
+      
+      // Optional: add a subtle ripple
+      const cellX = Math.floor((centerX - offsetX) / cellSize) * cellSize + offsetX;
+      const cellY = Math.floor((centerY - offsetY) / cellSize) * cellSize + offsetY;
+      ripples.push({ x: cellX, y: cellY, scale: 1, opacity: 0.4 });
+
+      // Emit burst lines
+      const numBurst = Math.floor(Math.random() * 5) + 3; // 3 to 7
+      for (let i = 0; i < numBurst; i++) {
+        tracers.push(new Tracer(canvas.width, canvas.height, primaryColor, secondaryColor, true, centerX, centerY));
+      }
+    };
+    window.addEventListener('ghost-hit-floor', onGhostHitFloor);
+
     const draw = () => {
       // Smooth mouse interpolation
       mouse.x += (targetMouse.x - mouse.x) * 0.15;
@@ -80,6 +116,19 @@ export function Background() {
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
+      // Determine if light mode is active by checking the document class
+      const isLight = document.documentElement.classList.contains('light');
+      const gridColorRgb = isLight ? '0, 0, 0' : '255, 255, 255';
+
+      const scrollX = window.scrollX;
+      const scrollY = window.scrollY;
+      
+      let currentOffsetX = (offsetX - scrollX) % cellSize;
+      if (currentOffsetX > 0) currentOffsetX -= cellSize;
+      
+      let currentOffsetY = (offsetY - scrollY) % cellSize;
+      if (currentOffsetY > 0) currentOffsetY -= cellSize;
+
       // 1. Base Grid (fades out towards edges for a clean, centered look)
       const centerX = canvas.width / 2;
       const centerY = canvas.height / 2;
@@ -92,20 +141,20 @@ export function Background() {
       ctx.strokeStyle = baseGridGradient;
       ctx.lineWidth = 1;
       ctx.beginPath();
-      for (let x = offsetX; x <= canvas.width; x += cellSize) {
+      for (let x = currentOffsetX; x <= canvas.width; x += cellSize) {
         ctx.moveTo(x, 0);
         ctx.lineTo(x, canvas.height);
       }
-      for (let y = offsetY; y <= canvas.height; y += cellSize) {
+      for (let y = currentOffsetY; y <= canvas.height; y += cellSize) {
         ctx.moveTo(0, y);
         ctx.lineTo(canvas.width, y);
       }
       ctx.stroke();
 
-      const nearestX = Math.round((mouse.x - offsetX) / cellSize) * cellSize + offsetX;
-      const nearestY = Math.round((mouse.y - offsetY) / cellSize) * cellSize + offsetY;
-      const cellX = Math.floor((mouse.x - offsetX) / cellSize) * cellSize + offsetX;
-      const cellY = Math.floor((mouse.y - offsetY) / cellSize) * cellSize + offsetY;
+      const nearestX = Math.round((mouse.x - currentOffsetX) / cellSize) * cellSize + currentOffsetX;
+      const nearestY = Math.round((mouse.y - currentOffsetY) / cellSize) * cellSize + currentOffsetY;
+      const cellX = Math.floor((mouse.x - currentOffsetX) / cellSize) * cellSize + currentOffsetX;
+      const cellY = Math.floor((mouse.y - currentOffsetY) / cellSize) * cellSize + currentOffsetY;
 
       // 2. Illuminated Grid near mouse
       const gridGlowGradient = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, glowRadius);
@@ -115,10 +164,10 @@ export function Background() {
       ctx.strokeStyle = gridGlowGradient;
       ctx.beginPath();
       
-      const startX = Math.floor((mouse.x - glowRadius - offsetX) / cellSize) * cellSize + offsetX;
-      const endX = Math.ceil((mouse.x + glowRadius - offsetX) / cellSize) * cellSize + offsetX;
-      const startY = Math.floor((mouse.y - glowRadius - offsetY) / cellSize) * cellSize + offsetY;
-      const endY = Math.ceil((mouse.y + glowRadius - offsetY) / cellSize) * cellSize + offsetY;
+      const startX = Math.floor((mouse.x - glowRadius - currentOffsetX) / cellSize) * cellSize + currentOffsetX;
+      const endX = Math.ceil((mouse.x + glowRadius - currentOffsetX) / cellSize) * cellSize + currentOffsetX;
+      const startY = Math.floor((mouse.y - glowRadius - currentOffsetY) / cellSize) * cellSize + currentOffsetY;
+      const endY = Math.ceil((mouse.y + glowRadius - currentOffsetY) / cellSize) * cellSize + currentOffsetY;
 
       for (let x = startX; x <= endX; x += cellSize) {
         if (x >= 0 && x <= canvas.width) {
@@ -182,11 +231,11 @@ export function Background() {
       }
 
       // 5. Grid Nodes (intersections light up near mouse and fade out slowly)
-      gridNodes.updateAndDraw(ctx, canvas.width, canvas.height, mouse.x, mouse.y, glowRadius, secondaryColor);
+      gridNodes.updateAndDraw(ctx, canvas.width, canvas.height, mouse.x, mouse.y, glowRadius, secondaryColor, currentOffsetX, currentOffsetY);
 
       // 6. Grid Tracers (Data streams decoupled from mouse, fade in fast, fade out slowly)
       tracers = tracers.filter(tracer => 
-        tracer.update(ctx, canvas.width, canvas.height, mouse.x, mouse.y, glowRadius, primaryColor, secondaryColor)
+        tracer.update(ctx, canvas.width, canvas.height, mouse.x, mouse.y, glowRadius, primaryColor, secondaryColor, currentOffsetX, currentOffsetY)
       );
 
       // 7. Ambient Mouse Glow
@@ -205,6 +254,8 @@ export function Background() {
       window.removeEventListener('resize', resize);
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('mousedown', onMouseClick);
+      window.removeEventListener('ghost-hit-floor', onGhostHitFloor);
+      clearTimeout(colorTimeout);
       cancelAnimationFrame(animationFrameId);
     };
   }, [theme, palette]);

@@ -9,7 +9,7 @@ import { ThemeProvider } from './components/ThemeProvider';
 
 export default function App() {
   return (
-    <ThemeProvider defaultTheme="dark" storageKey="saderius-theme">
+    <ThemeProvider defaultTheme="system" storageKey="saderius-theme">
       <Router>
         <Background />
         <div className="min-h-screen flex flex-col relative z-10">

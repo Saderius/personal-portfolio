@@ -53,7 +53,7 @@ export class Tracer {
     this.color = Math.random() > 0.5 ? primaryColor : secondaryColor;
   }
 
-  update(ctx: CanvasRenderingContext2D, canvasWidth: number, canvasHeight: number, mouseX: number, mouseY: number, glowRadius: number, primaryColor: string, secondaryColor: string): boolean {
+  update(ctx: CanvasRenderingContext2D, canvasWidth: number, canvasHeight: number, mouseX: number, mouseY: number, glowRadius: number, primaryColor: string, secondaryColor: string, offsetX: number = 0, offsetY: number = 0): boolean {
     this.pos += this.speed;
 
     let isOffScreen = false;
@@ -70,8 +70,8 @@ export class Tracer {
       this.respawn(canvasWidth, canvasHeight, primaryColor, secondaryColor);
     }
 
-    const x = this.isVertical ? this.lineIndex : this.pos;
-    const y = this.isVertical ? this.pos : this.lineIndex;
+    const x = (this.isVertical ? this.lineIndex : this.pos) + offsetX;
+    const y = (this.isVertical ? this.pos : this.lineIndex) + offsetY;
 
     const distToMouse = Math.hypot(
       Math.max(x, Math.min(mouseX, x + (this.isVertical ? 0 : this.length))) - mouseX,

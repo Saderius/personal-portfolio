@@ -2,15 +2,17 @@ export class GridNodes {
   nodes: Map<string, number> = new Map();
   cellSize: number = 50;
 
-  updateAndDraw(ctx: CanvasRenderingContext2D, canvasWidth: number, canvasHeight: number, mouseX: number, mouseY: number, glowRadius: number, color: string) {
+  updateAndDraw(ctx: CanvasRenderingContext2D, canvasWidth: number, canvasHeight: number, mouseX: number, mouseY: number, glowRadius: number, color: string, offsetX: number = 0, offsetY: number = 0) {
     // 1. Add/Update nodes near mouse
-    const startX = Math.max(0, Math.floor((mouseX - glowRadius) / this.cellSize) * this.cellSize);
-    const endX = Math.min(canvasWidth, Math.ceil((mouseX + glowRadius) / this.cellSize) * this.cellSize);
-    const startY = Math.max(0, Math.floor((mouseY - glowRadius) / this.cellSize) * this.cellSize);
-    const endY = Math.min(canvasHeight, Math.ceil((mouseY + glowRadius) / this.cellSize) * this.cellSize);
+    const startX = Math.floor((mouseX - glowRadius - offsetX) / this.cellSize) * this.cellSize + offsetX;
+    const endX = Math.ceil((mouseX + glowRadius - offsetX) / this.cellSize) * this.cellSize + offsetX;
+    const startY = Math.floor((mouseY - glowRadius - offsetY) / this.cellSize) * this.cellSize + offsetY;
+    const endY = Math.ceil((mouseY + glowRadius - offsetY) / this.cellSize) * this.cellSize + offsetY;
 
     for (let x = startX; x <= endX; x += this.cellSize) {
       for (let y = startY; y <= endY; y += this.cellSize) {
+        if (x < 0 || x > canvasWidth || y < 0 || y > canvasHeight) continue;
+        
         const dist = Math.hypot(x - mouseX, y - mouseY);
         if (dist < glowRadius) {
           const targetOpacity = 1 - (dist / glowRadius);

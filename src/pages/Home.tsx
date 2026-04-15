@@ -16,7 +16,7 @@ const categoryIcons: Record<string, React.ReactNode> = {
 };
 
 export function Home() {
-  const [activeCategory, setActiveCategory] = useState<string>('active');
+  const [activeCategory, setActiveCategory] = useState<string>('featured');
   const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
   const [visibleCount, setVisibleCount] = useState(9);
   const [isGameActive, setIsGameActive] = useState(false);
@@ -27,13 +27,13 @@ export function Home() {
   };
 
   const navLinks = [
-    { id: 'active', name: 'Active' },
+    { id: 'featured', name: 'Featured' },
     { id: 'games', name: 'Games' },
     { id: 'apps', name: 'Apps' },
     { id: 'python', name: 'Python' },
   ];
 
-  const filteredProjects = activeCategory === 'active' 
+  const filteredProjects = activeCategory === 'featured' 
     ? projects.filter(p => p.featured)
     : projects.filter(p => p.category === activeCategory);
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/src/lib/utils';
-import { Menu, X, Github, Mail, Sun, Moon, Palette } from 'lucide-react';
+import { Menu, X, Github, Mail, Sun, Moon, Palette, Monitor } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
 
 export function Navbar() {
@@ -17,6 +17,13 @@ export function Navbar() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const cycleTheme = () => {
+    const themes: ('system' | 'light' | 'dark')[] = ['system', 'light', 'dark'];
+    const currentIndex = themes.indexOf(theme as any);
+    const nextIndex = (currentIndex + 1) % themes.length;
+    setTheme(themes[nextIndex]);
+  };
 
   const cyclePalette = () => {
     const palettes: ('default' | 'green' | 'dark-blue' | 'grey')[] = ['default', 'green', 'dark-blue', 'grey'];
@@ -49,11 +56,11 @@ export function Navbar() {
             <Palette className="w-5 h-5" />
           </button>
           <button
-            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            onClick={cycleTheme}
             className="p-2 rounded-full glass glass-hover text-text-muted hover:text-text-main transition-all duration-300"
             aria-label="Toggle theme"
           >
-            {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            {theme === 'dark' ? <Moon className="w-5 h-5" /> : theme === 'light' ? <Sun className="w-5 h-5" /> : <Monitor className="w-5 h-5" />}
           </button>
           <a href="/resume.pdf" target="_blank" rel="noreferrer" className="text-sm font-medium text-text-muted hover:text-text-main hover:scale-110 transition-all duration-300 px-2">
             Resume
@@ -76,11 +83,11 @@ export function Navbar() {
             <Palette className="w-5 h-5" />
           </button>
           <button
-            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            onClick={cycleTheme}
             className="p-2 text-text-muted hover:text-text-main"
             aria-label="Toggle theme"
           >
-            {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            {theme === 'dark' ? <Moon className="w-5 h-5" /> : theme === 'light' ? <Sun className="w-5 h-5" /> : <Monitor className="w-5 h-5" />}
           </button>
           <button
             className="p-2 text-text-muted"
