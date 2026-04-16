@@ -21,6 +21,14 @@ export function Home() {
   const [visibleCount, setVisibleCount] = useState(9);
   const [isGameActive, setIsGameActive] = useState(false);
 
+  const getCategoryColor = (categoryId: string) => {
+    switch (categoryId.toLowerCase()) {
+      case 'games': return 'text-category-primary';
+      case 'apps': return 'text-category-secondary';
+      default: return 'text-text-main';
+    }
+  };
+
   const handleCategoryChange = (id: string) => {
     setActiveCategory(id);
     setVisibleCount(9);
@@ -60,21 +68,77 @@ export function Home() {
           "max-w-4xl mx-auto text-center transition-all duration-500",
           isGameActive ? "opacity-0 scale-95 pointer-events-none absolute inset-x-0" : "opacity-100 scale-100"
         )}>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass text-sm font-medium text-primary mb-6">
+          <motion.div 
+            className="flex justify-center mb-6"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-primary/20 shadow-lg shadow-primary/10 bg-surface">
+              <video 
+                src={`${import.meta.env.BASE_URL}Animacja_Trim.mp4`}
+                autoPlay 
+                loop 
+                muted 
+                playsInline
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </motion.div>
+          
+          <motion.div 
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass text-sm font-medium text-primary mb-6"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
             </span>
             Available for new opportunities
-          </div>
-          <h1 className="text-5xl md:text-7xl font-display font-bold tracking-tight mb-6 text-text-main">
-            Crafting digital <br className="hidden md:block" />
+          </motion.div>
+          
+          <motion.h1 
+            className="text-4xl md:text-6xl font-display font-bold tracking-tight mb-2 text-primary"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ 
+              type: "spring",
+              stiffness: 100,
+              damping: 10,
+              mass: 1,
+              delay: 0.2
+            }}
+          >
+            Swiss Army Man
+          </motion.h1>
+
+          <motion.h2 
+            className="text-5xl md:text-7xl font-display font-bold tracking-tight mb-6 text-text-main"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+          >
+            Crafting flawless <br className="hidden md:block" />
             <span className="text-gradient">experiences & games</span>
-          </h1>
-          <p className="text-lg md:text-xl text-text-muted mb-10 max-w-2xl mx-auto leading-relaxed">
-            I'm Saderius, a QA Lead, Designer, and Developer. I build apps, design user interfaces, and ensure quality in games like House Flipper and Agony.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          </motion.h2>
+          
+          <motion.p 
+            className="text-lg md:text-xl text-text-muted mb-10 max-w-2xl mx-auto leading-relaxed"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+          >
+            I'm Saderius—a versatile QA Lead, Designer, and Developer. I bridge the gap between creative design and technical execution, building intuitive apps and ensuring top-tier quality in hit titles like House Flipper and Agony.
+          </motion.p>
+          
+          <motion.div 
+            className="flex flex-col sm:flex-row items-center justify-center gap-4"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.5 }}
+          >
             <Link to="/contact">
               <Button size="lg" className="w-full sm:w-auto">Get in touch</Button>
             </Link>
@@ -88,7 +152,7 @@ export function Home() {
                 <ArrowRight className="w-4 h-4" /> GitHub
               </Button>
             </a>
-          </div>
+          </motion.div>
         </div>
         
         <AlienGame 
@@ -110,9 +174,9 @@ export function Home() {
                   key={link.id}
                   onClick={() => handleCategoryChange(link.id)}
                   className={cn(
-                    'px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 whitespace-nowrap',
+                    'px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 whitespace-nowrap',
                     activeCategory === link.id
-                      ? 'bg-nav-active text-text-main'
+                      ? cn('bg-nav-active', getCategoryColor(link.id))
                       : 'text-text-muted hover:text-text-main hover:bg-surface-hover'
                   )}
                 >
@@ -158,7 +222,7 @@ export function Home() {
                           <CardContent className="flex flex-col flex-1 p-6 pt-6 relative z-20">
                             <div className="mb-2 flex items-center justify-between">
                               <div className="flex items-center gap-2">
-                                <span className="text-xs font-medium uppercase tracking-wider text-primary">
+                                <span className={cn("text-xs font-bold uppercase tracking-wider", getCategoryColor(project.category))}>
                                   {project.category}
                                 </span>
                                 {project.status === 'active' && (

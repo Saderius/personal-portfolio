@@ -4,6 +4,7 @@ import { ExternalLink, Github, ArrowLeft } from 'lucide-react';
 import { projects, categories, ProjectCategory } from '@/src/data/projects';
 import { Card, CardContent } from '@/src/components/ui/Card';
 import { Button } from '@/src/components/ui/Button';
+import { cn } from '@/src/lib/utils';
 
 export function Category() {
   const { id } = useParams<{ id: string }>();
@@ -22,13 +23,23 @@ export function Category() {
     );
   }
 
+  const getCategoryColor = (categoryId: string) => {
+    switch (categoryId.toLowerCase()) {
+      case 'games': return 'text-category-primary';
+      case 'apps': return 'text-category-secondary';
+      default: return 'text-text-main';
+    }
+  };
+
   return (
     <div className="pt-32 pb-20 container mx-auto px-4 md:px-6">
       <div className="mb-12">
         <Link to="/" className="inline-flex items-center text-sm font-medium text-text-muted hover:text-text-main mb-6 transition-colors">
           <ArrowLeft className="w-4 h-4 mr-2" /> Back to Home
         </Link>
-        <h1 className="text-4xl md:text-5xl font-display font-bold mb-4 text-text-main">{category.title}</h1>
+        <h1 className={cn("text-4xl md:text-5xl font-display font-bold mb-4", getCategoryColor(category.id))}>
+          {category.title}
+        </h1>
         <p className="text-xl text-text-muted max-w-2xl">{category.description}</p>
       </div>
 

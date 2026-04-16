@@ -8,7 +8,7 @@ export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
-  const { theme, setTheme, palette, setPalette } = useTheme();
+  const { theme, setTheme, palette, setPalette, availablePalettes } = useTheme();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -26,10 +26,9 @@ export function Navbar() {
   };
 
   const cyclePalette = () => {
-    const palettes: ('default' | 'green' | 'dark-blue' | 'grey')[] = ['default', 'green', 'dark-blue', 'grey'];
-    const currentIndex = palettes.indexOf(palette as any);
-    const nextIndex = (currentIndex + 1) % palettes.length;
-    setPalette(palettes[nextIndex]);
+    const currentIndex = availablePalettes.findIndex(p => p.id === palette.id);
+    const nextIndex = (currentIndex + 1) % availablePalettes.length;
+    setPalette(availablePalettes[nextIndex]);
   };
 
   return (
@@ -41,8 +40,15 @@ export function Navbar() {
     >
       <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">
         <Link to="/" className="text-xl font-display font-bold tracking-tight text-text-main flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-bold">
-            S
+          <div className="w-8 h-8 rounded-full overflow-hidden border border-primary/20 bg-surface flex items-center justify-center">
+            <video 
+              src={`${import.meta.env.BASE_URL}Animacja_Trim.mp4`}
+              autoPlay 
+              loop 
+              muted 
+              playsInline
+              className="w-full h-full object-cover"
+            />
           </div>
           Saderius
         </Link>

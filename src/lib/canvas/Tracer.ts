@@ -39,7 +39,7 @@ export class Tracer {
         this.pos = initial ? Math.random() * canvasWidth : (Math.random() > 0.5 ? -100 : canvasWidth + 100);
       }
       
-      // 2x faster normal lines
+      // Random speed for normal lines
       if (!initial) {
          this.speed = this.pos < 0 ? (Math.random() * 8 + 4) : -(Math.random() * 8 + 4);
       } else {
@@ -53,8 +53,10 @@ export class Tracer {
     this.color = Math.random() > 0.5 ? primaryColor : secondaryColor;
   }
 
-  update(ctx: CanvasRenderingContext2D, canvasWidth: number, canvasHeight: number, mouseX: number, mouseY: number, glowRadius: number, primaryColor: string, secondaryColor: string, offsetX: number = 0, offsetY: number = 0): boolean {
-    this.pos += this.speed;
+  update(ctx: CanvasRenderingContext2D, canvasWidth: number, canvasHeight: number, mouseX: number, mouseY: number, glowRadius: number, primaryColor: string, secondaryColor: string, offsetX: number = 0, offsetY: number = 0, dt: number = 0.016): boolean {
+    // Multiply speed by delta time scale (60fps baseline -> dt * 60)
+    // This makes motion completely smooth and independent of framerate drops
+    this.pos += this.speed * (dt * 60);
 
     let isOffScreen = false;
     if (this.isVertical) {

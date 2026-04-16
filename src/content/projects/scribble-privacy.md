@@ -1,5 +1,6 @@
 ---
-status: "concluded"
+imageUrl: "https://raw.githubusercontent.com/Saderius/scribble-privacy-policy/main/scribble_pp.gif"
+status: "Active"
 title: "Scribble Privacy Policy"
 description: "A clean, responsive privacy policy page created for the Scribble application."
 category: "apps"

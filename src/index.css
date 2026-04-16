@@ -9,6 +9,9 @@
   --color-primary-hover: var(--primary-hover-hex);
   --color-secondary: var(--secondary-hex);
   
+  --color-category-primary: var(--cat-primary);
+  --color-category-secondary: var(--cat-secondary);
+  
   --color-text-main: var(--text-main);
   --color-text-muted: var(--text-muted);
   --color-glass-icon: var(--glass-icon-bg);
@@ -37,8 +40,16 @@
     --primary-hex: #8b5cf6;
     --primary-rgb: 139, 92, 246;
     --primary-hover-hex: #7c3aed;
+    --primary-light-hex: #a78bfa;
+    --primary-dark-hex: #6d28d9;
+    
     --secondary-hex: #f472b6;
     --secondary-rgb: 244, 114, 182;
+    --secondary-light-hex: #f9a8d4;
+    --secondary-dark-hex: #be185d;
+    
+    --cat-primary: var(--primary-light-hex);
+    --cat-secondary: var(--secondary-light-hex);
   }
 
   .light {
@@ -52,33 +63,9 @@
     --nav-bg-active: rgba(0, 0, 0, 0.1);
     --inverted-bg: #0f1115;
     --inverted-text: #ffffff;
-  }
-
-  .palette-green {
-    /* Grassy Green and Sky Blue */
-    --primary-hex: #22c55e;
-    --primary-rgb: 34, 197, 94;
-    --primary-hover-hex: #16a34a;
-    --secondary-hex: #0ea5e9;
-    --secondary-rgb: 14, 165, 233;
-  }
-
-  .palette-dark-blue {
-    /* Dark Blue and Gold */
-    --primary-hex: #fbbf24;
-    --primary-rgb: 251, 191, 36;
-    --primary-hover-hex: #f59e0b;
-    --secondary-hex: #3b82f6;
-    --secondary-rgb: 59, 130, 246;
-  }
-
-  .palette-grey {
-    /* Grey and Light Grey */
-    --primary-hex: #9ca3af;
-    --primary-rgb: 156, 163, 175;
-    --primary-hover-hex: #d1d5db;
-    --secondary-hex: #6b7280;
-    --secondary-rgb: 107, 114, 128;
+    
+    --cat-primary: var(--primary-dark-hex);
+    --cat-secondary: var(--secondary-dark-hex);
   }
 
   body {

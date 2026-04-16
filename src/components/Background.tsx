@@ -43,31 +43,13 @@ export function Background() {
 
     const glowRadius = 300;
     
-    // Read dynamic colors from CSS variables
-    let primaryColor = '139, 92, 246'; // default
-    let secondaryColor = '244, 114, 182'; // default
+    // Read dynamic colors from the palette object directly
+    const primaryColor = palette.primaryRgb;
+    const secondaryColor = palette.secondaryRgb;
 
-    const updateColors = () => {
-      const rootStyles = getComputedStyle(document.documentElement);
-      const p = rootStyles.getPropertyValue('--primary-rgb').trim();
-      const s = rootStyles.getPropertyValue('--secondary-rgb').trim();
-      if (p) primaryColor = p;
-      if (s) secondaryColor = s;
-    };
+    // Pool of active tracers (reduced count for better performance)
+    let tracers = Array.from({ length: 75 }).map(() => new Tracer(canvas.width, canvas.height, primaryColor, secondaryColor));
     
-    updateColors();
-
-    // Pool of active tracers (increased count since they are now global)
-    let tracers = Array.from({ length: 150 }).map(() => new Tracer(canvas.width, canvas.height, primaryColor, secondaryColor));
-    
-    // The ThemeProvider might update CSS variables slightly after this effect runs.
-    // We check again after a short delay to ensure we have the correct colors.
-    const colorTimeout = setTimeout(() => {
-      updateColors();
-      tracers.forEach(t => {
-        t.color = Math.random() > 0.5 ? primaryColor : secondaryColor;
-      });
-    }, 50);
     const gridNodes = new GridNodes();
     let ripples: {x: number, y: number, scale: number, opacity: number}[] = [];
 
@@ -101,18 +83,24 @@ export function Background() {
       const cellY = Math.floor((centerY - offsetY) / cellSize) * cellSize + offsetY;
       ripples.push({ x: cellX, y: cellY, scale: 1, opacity: 0.4 });
 
-      // Emit burst lines
-      const numBurst = Math.floor(Math.random() * 5) + 3; // 3 to 7
-      for (let i = 0; i < numBurst; i++) {
-        tracers.push(new Tracer(canvas.width, canvas.height, primaryColor, secondaryColor, true, centerX, centerY));
-      }
+      // Emit burst lines - DISABLED to test if this causes the speed up/down illusion
+      // const numBurst = Math.floor(Math.random() * 5) + 3; // 3 to 7
+      // for (let i = 0; i < numBurst; i++) {
+      //   tracers.push(new Tracer(canvas.width, canvas.height, primaryColor, secondaryColor, true, centerX, centerY));
+      // }
     };
     window.addEventListener('ghost-hit-floor', onGhostHitFloor);
 
-    const draw = () => {
-      // Smooth mouse interpolation
-      mouse.x += (targetMouse.x - mouse.x) * 0.15;
-      mouse.y += (targetMouse.y - mouse.y) * 0.15;
+    let lastTime: number | null = null;
+
+    const draw = (time: number) => {
+      if (lastTime === null) lastTime = time;
+      const dt = Math.min((time - lastTime) / 1000, 0.1); // clamp delta time to 100ms max to prevent jumps
+      lastTime = time;
+
+      // Smooth mouse interpolation (speed adjusted for dt)
+      mouse.x += (targetMouse.x - mouse.x) * 10 * dt;
+      mouse.y += (targetMouse.y - mouse.y) * 10 * dt;
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
@@ -235,7 +223,7 @@ export function Background() {
 
       // 6. Grid Tracers (Data streams decoupled from mouse, fade in fast, fade out slowly)
       tracers = tracers.filter(tracer => 
-        tracer.update(ctx, canvas.width, canvas.height, mouse.x, mouse.y, glowRadius, primaryColor, secondaryColor, currentOffsetX, currentOffsetY)
+        tracer.update(ctx, canvas.width, canvas.height, mouse.x, mouse.y, glowRadius, primaryColor, secondaryColor, currentOffsetX, currentOffsetY, dt)
       );
 
       // 7. Ambient Mouse Glow
@@ -248,14 +236,13 @@ export function Background() {
       animationFrameId = requestAnimationFrame(draw);
     };
 
-    draw();
+    animationFrameId = requestAnimationFrame((time) => { lastTime = time; draw(time); });
 
     return () => {
       window.removeEventListener('resize', resize);
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('mousedown', onMouseClick);
       window.removeEventListener('ghost-hit-floor', onGhostHitFloor);
-      clearTimeout(colorTimeout);
       cancelAnimationFrame(animationFrameId);
     };
   }, [theme, palette]);

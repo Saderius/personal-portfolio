@@ -1,28 +1,44 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import palettesData from '../config/palettes.json';
 
 type Theme = 'dark' | 'light' | 'system';
-type Palette = 'default' | 'green' | 'dark-blue' | 'grey';
+
+export type PaletteConfig = {
+  id: string;
+  name: string;
+  primaryHex: string;
+  primaryRgb: string;
+  primaryHoverHex: string;
+  primaryLightHex: string;
+  primaryDarkHex: string;
+  secondaryHex: string;
+  secondaryRgb: string;
+  secondaryLightHex: string;
+  secondaryDarkHex: string;
+};
+
+const palettes: PaletteConfig[] = palettesData;
 
 type ThemeProviderProps = {
   children: React.ReactNode;
   defaultTheme?: Theme;
-  defaultPalette?: Palette;
   storageKey?: string;
-  paletteStorageKey?: string;
 };
 
 type ThemeProviderState = {
   theme: Theme;
   setTheme: (theme: Theme) => void;
-  palette: Palette;
-  setPalette: (palette: Palette) => void;
+  palette: PaletteConfig;
+  setPalette: (palette: PaletteConfig) => void;
+  availablePalettes: PaletteConfig[];
 };
 
 const initialState: ThemeProviderState = {
   theme: 'system',
   setTheme: () => null,
-  palette: 'default',
+  palette: palettes[0],
   setPalette: () => null,
+  availablePalettes: palettes,
 };
 
 const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
@@ -30,17 +46,19 @@ const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
 export function ThemeProvider({
   children,
   defaultTheme = 'system',
-  defaultPalette = 'default',
   storageKey = 'vite-ui-theme',
-  paletteStorageKey = 'vite-ui-palette',
   ...props
 }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(
     () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
   );
-  const [palette, setPalette] = useState<Palette>(
-    () => (localStorage.getItem(paletteStorageKey) as Palette) || defaultPalette
-  );
+  
+  // Pick a random palette on initial load
+  const [palette, setPalette] = useState<PaletteConfig>(() => {
+    const randomizablePalettes = palettes.filter(p => p.id !== 'grey');
+    const randomIndex = Math.floor(Math.random() * randomizablePalettes.length);
+    return randomizablePalettes[randomIndex];
+  });
 
   useEffect(() => {
     const root = window.document.documentElement;
@@ -71,8 +89,17 @@ export function ThemeProvider({
 
   useEffect(() => {
     const root = window.document.documentElement;
-    root.classList.remove('palette-default', 'palette-green', 'palette-dark-blue', 'palette-grey');
-    root.classList.add(`palette-${palette}`);
+    // Apply palette CSS variables dynamically
+    root.style.setProperty('--primary-hex', palette.primaryHex);
+    root.style.setProperty('--primary-rgb', palette.primaryRgb);
+    root.style.setProperty('--primary-hover-hex', palette.primaryHoverHex);
+    root.style.setProperty('--primary-light-hex', palette.primaryLightHex);
+    root.style.setProperty('--primary-dark-hex', palette.primaryDarkHex);
+    
+    root.style.setProperty('--secondary-hex', palette.secondaryHex);
+    root.style.setProperty('--secondary-rgb', palette.secondaryRgb);
+    root.style.setProperty('--secondary-light-hex', palette.secondaryLightHex);
+    root.style.setProperty('--secondary-dark-hex', palette.secondaryDarkHex);
   }, [palette]);
 
   const value = {
@@ -82,10 +109,8 @@ export function ThemeProvider({
       setTheme(theme);
     },
     palette,
-    setPalette: (palette: Palette) => {
-      localStorage.setItem(paletteStorageKey, palette);
-      setPalette(palette);
-    },
+    setPalette,
+    availablePalettes: palettes,
   };
 
   return (
