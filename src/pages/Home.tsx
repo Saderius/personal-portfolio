@@ -7,6 +7,7 @@ import { Button } from '@/src/components/ui/Button';
 import { Card, CardContent } from '@/src/components/ui/Card';
 import { cn } from '@/src/lib/utils';
 import { AlienGame } from '@/src/components/AlienGame';
+import avatarVideo from '@/src/assets/Animacja_Trim.mp4';
 
 const categoryIcons: Record<string, React.ReactNode> = {
   games: <Gamepad2 className="w-6 h-6" />,
@@ -76,7 +77,7 @@ export function Home() {
           >
             <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-primary/20 shadow-lg shadow-primary/10 bg-surface">
               <video 
-                src={`${import.meta.env.BASE_URL}Animacja_Trim.mp4`}
+                src={avatarVideo}
                 autoPlay 
                 loop 
                 muted 

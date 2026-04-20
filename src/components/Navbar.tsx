@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/src/lib/utils';
 import { Menu, X, Github, Mail, Sun, Moon, Palette, Monitor } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
+import avatarVideo from '@/src/assets/Animacja_Trim.mp4';
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -42,7 +43,7 @@ export function Navbar() {
         <Link to="/" className="text-xl font-display font-bold tracking-tight text-text-main flex items-center gap-2">
           <div className="w-8 h-8 rounded-full overflow-hidden border border-primary/20 bg-surface flex items-center justify-center">
             <video 
-              src={`${import.meta.env.BASE_URL}Animacja_Trim.mp4`}
+              src={avatarVideo}
               autoPlay 
               loop 
               muted 
