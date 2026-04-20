@@ -7,7 +7,6 @@ import { Button } from '@/src/components/ui/Button';
 import { Card, CardContent } from '@/src/components/ui/Card';
 import { cn } from '@/src/lib/utils';
 import { AlienGame } from '@/src/components/AlienGame';
-import avatarVideo from '@/src/assets/Animacja_Trim.mp4';
 
 const categoryIcons: Record<string, React.ReactNode> = {
   games: <Gamepad2 className="w-6 h-6" />,
@@ -77,12 +76,13 @@ export function Home() {
           >
             <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-primary/20 shadow-lg shadow-primary/10 bg-surface">
               <video 
-                src={avatarVideo}
-                autoPlay 
-                loop 
-                muted 
-                playsInline
+                autoPlay={true}
+                loop={true}
+                muted={true}
+                defaultMuted={true}
+                playsInline={true}
                 className="w-full h-full object-cover"
+                src="./Animacja_Trim.mp4"
               />
             </div>
           </motion.div>
