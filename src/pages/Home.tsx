@@ -81,8 +81,9 @@ export function Home() {
                 muted={true}
                 playsInline={true}
                 className="w-full h-full object-cover"
-                src="./Animacja_Trim.mp4"
-              />
+              >
+                <source src={`${import.meta.env.BASE_URL}Animacja_Trim.mp4`} type="video/mp4" />
+              </video>
             </div>
           </motion.div>
           
