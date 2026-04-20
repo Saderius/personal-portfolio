@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/src/lib/utils';
 import { Menu, X, Github, Mail, Sun, Moon, Palette, Monitor } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
+import avatarVideo from '@/src/assets/Animacja_Trim.mp4';
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -47,9 +48,8 @@ export function Navbar() {
               muted={true}
               playsInline={true}
               className="w-full h-full object-cover"
-            >
-              <source src={`${import.meta.env.BASE_URL}Animacja_Trim.mp4`} type="video/mp4" />
-            </video>
+              src={avatarVideo}
+            />
           </div>
           Saderius
         </Link>

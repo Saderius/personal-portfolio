@@ -7,6 +7,7 @@ import { Button } from '@/src/components/ui/Button';
 import { Card, CardContent } from '@/src/components/ui/Card';
 import { cn } from '@/src/lib/utils';
 import { AlienGame } from '@/src/components/AlienGame';
+import avatarVideo from '@/src/assets/Animacja_Trim.mp4';
 
 const categoryIcons: Record<string, React.ReactNode> = {
   games: <Gamepad2 className="w-6 h-6" />,
@@ -81,9 +82,8 @@ export function Home() {
                 muted={true}
                 playsInline={true}
                 className="w-full h-full object-cover"
-              >
-                <source src={`${import.meta.env.BASE_URL}Animacja_Trim.mp4`} type="video/mp4" />
-              </video>
+                src={avatarVideo}
+              />
             </div>
           </motion.div>
           
