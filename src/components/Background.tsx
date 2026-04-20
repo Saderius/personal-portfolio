@@ -58,11 +58,6 @@ export function Background() {
       const cellY = Math.floor((e.clientY - offsetY) / cellSize) * cellSize + offsetY;
       
       ripples.push({ x: cellX, y: cellY, scale: 1, opacity: 1 });
-
-      const numBurst = Math.floor(Math.random() * 5) + 3; // 3 to 7
-      for (let i = 0; i < numBurst; i++) {
-        tracers.push(new Tracer(canvas.width, canvas.height, primaryColor, secondaryColor, true, e.clientX, e.clientY));
-      }
     };
     window.addEventListener('mousedown', onMouseClick);
 
@@ -83,11 +78,11 @@ export function Background() {
       const cellY = Math.floor((centerY - offsetY) / cellSize) * cellSize + offsetY;
       ripples.push({ x: cellX, y: cellY, scale: 1, opacity: 0.4 });
 
-      // Emit burst lines - DISABLED to test if this causes the speed up/down illusion
-      // const numBurst = Math.floor(Math.random() * 5) + 3; // 3 to 7
-      // for (let i = 0; i < numBurst; i++) {
-      //   tracers.push(new Tracer(canvas.width, canvas.height, primaryColor, secondaryColor, true, centerX, centerY));
-      // }
+      // Emit burst lines under the ghost
+      const numBurst = Math.floor(Math.random() * 5) + 3; // 3 to 7
+      for (let i = 0; i < numBurst; i++) {
+        tracers.push(new Tracer(canvas.width, canvas.height, primaryColor, secondaryColor, true, centerX, centerY));
+      }
     };
     window.addEventListener('ghost-hit-floor', onGhostHitFloor);
 

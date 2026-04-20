@@ -79,7 +79,6 @@ export function Home() {
                 autoPlay={true}
                 loop={true}
                 muted={true}
-                defaultMuted={true}
                 playsInline={true}
                 className="w-full h-full object-cover"
                 src="./Animacja_Trim.mp4"
