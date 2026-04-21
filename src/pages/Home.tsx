@@ -82,7 +82,7 @@ export function Home() {
                 playsInline
                 className="absolute inset-0 w-full h-full object-cover z-20"
               >
-                <source src="https://github.com/Saderius/personal-portfolio/blob/03e5e800b38d8cac292390c0edd7542d0984c043/src/assets/Animacja_Trim.mp4?raw=true" type="video/mp4" />
+                <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4" />
               </video>
             </div>
           </motion.div>
