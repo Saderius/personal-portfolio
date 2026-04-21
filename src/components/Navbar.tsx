@@ -3,16 +3,13 @@ import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/src/lib/utils';
 import { Menu, X, Github, Mail, Sun, Moon, Palette, Monitor } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
+import avatarVideo from '@/src/assets/Animacja_Trim.mp4';
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
   const { theme, setTheme, palette, setPalette, availablePalettes } = useTheme();
-
-  const videoSrc = window.location.hostname.includes('github.io') 
-    ? '/personal-portfolio/Animacja_Trim.mp4' 
-    : '/Animacja_Trim.mp4';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -44,15 +41,16 @@ export function Navbar() {
     >
       <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">
         <Link to="/" className="text-xl font-display font-bold tracking-tight text-text-main flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full overflow-hidden border border-primary/20 bg-surface flex items-center justify-center">
+          <div className="relative w-8 h-8 rounded-full overflow-hidden border border-primary/20 bg-surface flex items-center justify-center block z-10">
             <video 
-              src={videoSrc}
               autoPlay 
               loop 
               muted 
               playsInline
-              className="w-full h-full object-cover"
-            />
+              className="absolute inset-0 w-full h-full object-cover z-20"
+            >
+              <source src={avatarVideo} type="video/mp4" />
+            </video>
           </div>
           Saderius
         </Link>

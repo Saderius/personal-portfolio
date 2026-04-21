@@ -7,6 +7,7 @@ import { Button } from '@/src/components/ui/Button';
 import { Card, CardContent } from '@/src/components/ui/Card';
 import { cn } from '@/src/lib/utils';
 import { AlienGame } from '@/src/components/AlienGame';
+import avatarVideo from '@/src/assets/Animacja_Trim.mp4';
 
 const categoryIcons: Record<string, React.ReactNode> = {
   games: <Gamepad2 className="w-6 h-6" />,
@@ -20,10 +21,6 @@ export function Home() {
   const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
   const [visibleCount, setVisibleCount] = useState(9);
   const [isGameActive, setIsGameActive] = useState(false);
-
-  const videoSrc = window.location.hostname.includes('github.io') 
-    ? '/personal-portfolio/Animacja_Trim.mp4' 
-    : '/Animacja_Trim.mp4';
 
   const getCategoryColor = (categoryId: string) => {
     switch (categoryId.toLowerCase()) {
@@ -78,15 +75,16 @@ export function Home() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
           >
-            <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-primary/20 shadow-lg shadow-primary/10 bg-surface">
+            <div className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-primary/20 shadow-lg shadow-primary/10 bg-surface block z-10">
               <video 
-                src={videoSrc}
                 autoPlay 
                 loop 
                 muted 
                 playsInline
-                className="w-full h-full object-cover"
-              />
+                className="absolute inset-0 w-full h-full object-cover z-20"
+              >
+                <source src={avatarVideo} type="video/mp4" />
+              </video>
             </div>
           </motion.div>
           
@@ -104,7 +102,7 @@ export function Home() {
           </motion.div>
           
           <motion.h1 
-            className="text-4xl md:text-6xl font-display font-bold tracking-tight mb-2 text-primary"
+            className="text-4xl md:text-6xl font-display font-bold tracking-tight mb-2 text-gradient"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ 
