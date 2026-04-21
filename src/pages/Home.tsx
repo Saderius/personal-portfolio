@@ -7,7 +7,6 @@ import { Button } from '@/src/components/ui/Button';
 import { Card, CardContent } from '@/src/components/ui/Card';
 import { cn } from '@/src/lib/utils';
 import { AlienGame } from '@/src/components/AlienGame';
-import avatarVideo from '@/src/assets/Animacja_Trim.mp4';
 
 const categoryIcons: Record<string, React.ReactNode> = {
   games: <Gamepad2 className="w-6 h-6" />,
@@ -21,6 +20,10 @@ export function Home() {
   const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
   const [visibleCount, setVisibleCount] = useState(9);
   const [isGameActive, setIsGameActive] = useState(false);
+
+  const videoSrc = window.location.hostname.includes('github.io') 
+    ? '/personal-portfolio/Animacja_Trim.mp4' 
+    : '/Animacja_Trim.mp4';
 
   const getCategoryColor = (categoryId: string) => {
     switch (categoryId.toLowerCase()) {
@@ -77,13 +80,12 @@ export function Home() {
           >
             <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-primary/20 shadow-lg shadow-primary/10 bg-surface">
               <video 
-                ref={(el) => { if (el) { el.defaultMuted = true; el.muted = true; } }}
-                autoPlay={true}
-                loop={true}
-                muted={true}
-                playsInline={true}
+                src={videoSrc}
+                autoPlay 
+                loop 
+                muted 
+                playsInline
                 className="w-full h-full object-cover"
-                src={avatarVideo}
               />
             </div>
           </motion.div>
