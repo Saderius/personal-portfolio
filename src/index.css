@@ -139,12 +139,63 @@
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    background-image: linear-gradient(to right, var(--primary-hex), var(--secondary-hex));
+    
+    background-image: linear-gradient(to right, var(--primary-hex), var(--secondary-hex), var(--primary-hex));
+      
+    background-size: 200% auto;
+    display: inline-block;
+    animation: 
+      gradientPan 10s linear infinite,
+      textGlitch 4s linear infinite;
   }
 }
 
 html {
   scroll-behavior: smooth;
+}
+
+@keyframes gradientPan {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes textGlitch {
+  0%, 94%, 100% { 
+    transform: none; 
+    filter: none; 
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  95% { 
+    transform: translate(-4px, 0); 
+    filter: hue-rotate(90deg) contrast(1.5) brightness(1.2); 
+    -webkit-mask-image: repeating-linear-gradient(0deg, #000 0px, #000 2px, transparent 2px, transparent 4px);
+    mask-image: repeating-linear-gradient(0deg, #000 0px, #000 2px, transparent 2px, transparent 4px);
+  }
+  96% { 
+    transform: translate(4px, 0); 
+    filter: hue-rotate(-90deg) contrast(1.5) brightness(1.5); 
+    -webkit-mask-image: repeating-linear-gradient(0deg, #000 0px, #000 1px, transparent 1px, transparent 3px);
+    mask-image: repeating-linear-gradient(0deg, #000 0px, #000 1px, transparent 1px, transparent 3px);
+  }
+  97% { 
+    transform: translate(-2px, 0); 
+    filter: none; 
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  98% {
+    transform: translate(3px, 0);
+    filter: hue-rotate(45deg) contrast(1.5) brightness(1.2);
+    -webkit-mask-image: repeating-linear-gradient(0deg, #000 0px, #000 3px, transparent 3px, transparent 6px);
+    mask-image: repeating-linear-gradient(0deg, #000 0px, #000 3px, transparent 3px, transparent 6px);
+  }
+  99% {
+    transform: translate(-3px, 0);
+    filter: hue-rotate(-45deg) contrast(1.5) brightness(1.2);
+    -webkit-mask-image: repeating-linear-gradient(0deg, #000 0px, #000 1px, transparent 1px, transparent 2px);
+    mask-image: repeating-linear-gradient(0deg, #000 0px, #000 1px, transparent 1px, transparent 2px);
+  }
 }
 
 @property --a1 { syntax: '<angle>'; initial-value: 0deg; inherits: false; }

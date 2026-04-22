@@ -63,7 +63,7 @@ export function Home() {
   return (
     <div className="pt-32 pb-20">
       {/* Hero Section */}
-      <section className="container mx-auto px-4 md:px-6 mb-16 relative min-h-[350px]">
+      <section id="hero-section" className="container mx-auto px-4 md:px-6 mb-16 relative min-h-[350px]">
         <div className={cn(
           "max-w-4xl mx-auto text-center transition-all duration-500",
           isGameActive ? "opacity-0 scale-95 pointer-events-none absolute inset-x-0" : "opacity-100 scale-100"
@@ -98,7 +98,7 @@ export function Home() {
           </motion.div>
           
           <motion.h1 
-            className="text-4xl md:text-6xl font-display font-bold tracking-tight mb-2 text-gradient"
+            className="text-4xl md:text-6xl font-display font-bold tracking-tight mb-2 text-text-main"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ 
@@ -109,7 +109,7 @@ export function Home() {
               delay: 0.2
             }}
           >
-            Swiss Army Man
+            Patryk <span className="text-gradient">(Saderius)</span> Mroziński
           </motion.h1>
 
           <motion.h2 
@@ -118,8 +118,7 @@ export function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
           >
-            Crafting flawless <br className="hidden md:block" />
-            <span className="text-gradient">experiences & games</span>
+            The <span className="text-gradient">Swiss Army Man</span>
           </motion.h2>
           
           <motion.p 
@@ -128,7 +127,7 @@ export function Home() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.4 }}
           >
-            I'm Saderius—a versatile QA Lead, Designer, and Developer. I bridge the gap between creative design and technical execution, building intuitive apps and ensuring top-tier quality in hit titles like House Flipper and Agony.
+            A versatile QA Lead, Designer, and Developer bridging the gap between creative vision and technical execution. I craft flawless interactive experiences and games, driving top-tier quality in hit titles like House Flipper and Agony.
           </motion.p>
           
           <motion.div 
