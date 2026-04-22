@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, Send, MapPin, Linkedin, Github } from 'lucide-react';
+import { Mail, Send, MapPin, Linkedin, Github, Facebook, Instagram } from 'lucide-react';
 import { Button } from '@/src/components/ui/Button';
 
 export function Contact() {
@@ -14,7 +14,7 @@ export function Contact() {
     // Simple mailto fallback for static site
     const subject = encodeURIComponent(`Portfolio Contact from ${formData.name}`);
     const body = encodeURIComponent(`Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`);
-    window.location.href = `mailto:0101porto@gmail.com?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:saderiusishere@gmail.com,20mincode@gmail.com?subject=${subject}&body=${body}`;
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -39,23 +39,29 @@ export function Contact() {
             <h3 className="text-xl font-display font-bold mb-6 text-text-main">Contact Information</h3>
             
             <div className="flex flex-col gap-6">
-              <a href="mailto:0101porto@gmail.com" className="flex items-center gap-4 text-text-muted hover:text-text-main transition-colors group">
-                <div className="w-12 h-12 rounded-full bg-glass-icon flex items-center justify-center group-hover:bg-primary/20 group-hover:text-primary transition-colors">
+              <div className="flex items-start gap-4 text-text-muted transition-colors">
+                <div className="w-12 h-12 rounded-full bg-glass-icon flex items-center justify-center shrink-0">
                   <Mail className="w-5 h-5" />
                 </div>
-                <div>
-                  <p className="text-sm text-text-muted mb-1">Email</p>
-                  <p className="font-medium text-text-main">0101porto@gmail.com</p>
+                <div className="flex flex-col gap-1">
+                  <p className="text-sm text-text-muted mb-1">Emails</p>
+                  <a href="mailto:saderiusishere@gmail.com" className="font-medium text-text-main hover:text-primary transition-colors block">
+                    saderiusishere@gmail.com
+                  </a>
+                  <a href="mailto:20mincode@gmail.com" className="font-medium text-text-main hover:text-primary transition-colors block">
+                    20mincode@gmail.com
+                  </a>
                 </div>
-              </a>
+              </div>
               
-              <div className="flex items-center gap-4 text-text-muted">
-                <div className="w-12 h-12 rounded-full bg-glass-icon flex items-center justify-center">
+              <div className="flex items-start gap-4 text-text-muted">
+                <div className="w-12 h-12 rounded-full bg-glass-icon flex items-center justify-center shrink-0">
                   <MapPin className="w-5 h-5" />
                 </div>
-                <div>
+                <div className="flex flex-col">
                   <p className="text-sm text-text-muted mb-1">Location</p>
                   <p className="font-medium text-text-main">Available Worldwide</p>
+                  <p className="text-xs text-text-muted mt-1">(located in Poland)</p>
                 </div>
               </div>
             </div>
@@ -66,9 +72,14 @@ export function Contact() {
                 <a href="https://github.com/Saderius" target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full glass flex items-center justify-center text-text-muted hover:text-text-main hover:bg-surface-hover transition-colors">
                   <Github className="w-5 h-5" />
                 </a>
-                {/* Add LinkedIn if available, using a placeholder for now */}
-                <a href="#" className="w-10 h-10 rounded-full glass flex items-center justify-center text-text-muted hover:text-text-main hover:bg-surface-hover transition-colors">
+                <a href="https://www.linkedin.com/in/saderius/" target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full glass flex items-center justify-center text-text-muted hover:text-text-main hover:bg-surface-hover transition-colors">
                   <Linkedin className="w-5 h-5" />
+                </a>
+                <a href="https://www.facebook.com/saderius/" target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full glass flex items-center justify-center text-text-muted hover:text-text-main hover:bg-surface-hover transition-colors">
+                  <Facebook className="w-5 h-5" />
+                </a>
+                <a href="https://www.instagram.com/saderius/" target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full glass flex items-center justify-center text-text-muted hover:text-text-main hover:bg-surface-hover transition-colors">
+                  <Instagram className="w-5 h-5" />
                 </a>
               </div>
             </div>

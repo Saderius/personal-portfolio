@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/src/lib/utils';
-import { Menu, X, Github, Mail, Sun, Moon, Palette, Monitor } from 'lucide-react';
+import { X, Github, Mail, Sun, Moon, Palette, Monitor } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
 import { motion, AnimatePresence } from 'motion/react';
 import { Button } from '@/src/components/ui/Button';
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isHeroVisible, setIsHeroVisible] = useState(true);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const location = useLocation();
@@ -42,7 +41,6 @@ export function Navbar() {
   }, [location.pathname]);
 
   useEffect(() => {
-    setMobileMenuOpen(false);
     setIsSheetOpen(false);
   }, [location.pathname]);
 
@@ -119,7 +117,7 @@ export function Navbar() {
           </Link>
         </div>
 
-        {/* Mobile Menu Toggle */}
+        {/* Mobile Menu Actions */}
         <div className="flex items-center gap-2 md:hidden">
           <button
             onClick={cyclePalette}
@@ -135,32 +133,8 @@ export function Navbar() {
           >
             {theme === 'dark' ? <Moon className="w-5 h-5" /> : theme === 'light' ? <Sun className="w-5 h-5" /> : <Monitor className="w-5 h-5" />}
           </button>
-          <button
-            className="p-2 text-text-muted"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            {mobileMenuOpen ? <X /> : <Menu />}
-          </button>
         </div>
       </div>
-
-      {/* Mobile Nav */}
-      {mobileMenuOpen && (
-        <div className="md:hidden absolute top-full left-0 w-full glass border-t border-surface-border p-4 flex flex-col gap-2">
-          <a href="/resume.pdf" target="_blank" rel="noreferrer" className="px-4 py-2 text-sm font-medium text-text-muted hover:text-text-main">
-            View Resume
-          </a>
-          <div className="flex items-center gap-4 px-4 py-2">
-            <a href="https://github.com/Saderius" target="_blank" rel="noreferrer" className="text-text-muted hover:text-text-main">
-              <Github className="w-6 h-6" />
-            </a>
-            <Link to="/contact" onClick={() => setMobileMenuOpen(false)} className="flex-1 text-center px-5 py-2 rounded-full bg-inverted text-inverted-text font-medium hover:opacity-80 transition-colors text-sm">
-              Contact Me
-            </Link>
-          </div>
-        </div>
-      )}
-
       </header>
 
       {/* Smart Card Overlay */}
@@ -206,25 +180,9 @@ export function Navbar() {
                 The <span className="text-gradient">Swiss Army Man</span>
               </h2>
 
-              <p className="text-sm text-text-muted mb-6 leading-relaxed">
+              <p className="text-sm text-text-muted leading-relaxed">
                 A versatile QA Lead, Designer, and Developer bridging the gap between creative vision and technical execution. I craft flawless interactive experiences and games, driving top-tier quality in hit titles like House Flipper and Agony.
               </p>
-
-              <div className="flex flex-col w-full gap-3">
-                <Link to="/contact" onClick={() => setIsSheetOpen(false)}>
-                  <Button variant="primary" className="w-full justify-center">Get in touch</Button>
-                </Link>
-                <div className="flex gap-3">
-                  <a href="/resume.pdf" target="_blank" rel="noreferrer" className="flex-1">
-                    <Button variant="outline" className="w-full justify-center">Resume</Button>
-                  </a>
-                  <a href="https://github.com/Saderius" target="_blank" rel="noreferrer" className="flex-1">
-                    <Button variant="outline" className="w-full justify-center gap-2">
-                      <Github className="w-4 h-4" /> GitHub
-                    </Button>
-                  </a>
-                </div>
-              </div>
             </div>
           </motion.div>
         )}
