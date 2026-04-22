@@ -75,13 +75,11 @@ export function Home() {
             transition={{ duration: 0.5 }}
           >
             <div className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-primary/20 shadow-lg shadow-primary/10 bg-surface block z-10">
-              <video 
-                src={`${import.meta.env.BASE_URL}Animacja_Trim.mp4`}
-                autoPlay 
-                loop 
-                muted 
-                playsInline
+              <img 
+                src="https://i.imgur.com/JyGRmNR.gif"
+                alt="Avatar Profile"
                 className="absolute inset-0 w-full h-full object-cover z-20"
+                referrerPolicy="no-referrer"
               />
             </div>
           </motion.div>

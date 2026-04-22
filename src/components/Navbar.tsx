@@ -44,13 +44,11 @@ export function Navbar() {
       <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">
         <Link to="/" className="text-xl font-display font-bold tracking-tight text-text-main flex items-center gap-2">
           <div className="relative w-8 h-8 rounded-full overflow-hidden border border-primary/20 bg-surface flex items-center justify-center block z-10">
-            <video 
-              src={`${import.meta.env.BASE_URL}Animacja_Trim.mp4`}
-              autoPlay 
-              loop 
-              muted 
-              playsInline
+            <img 
+              src="https://i.imgur.com/JyGRmNR.gif"
+              alt="Avatar"
               className="absolute inset-0 w-full h-full object-cover z-20"
+              referrerPolicy="no-referrer"
             />
           </div>
           Saderius
