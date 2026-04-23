@@ -9,6 +9,7 @@ import { Button } from '@/src/components/ui/Button';
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isHeroVisible, setIsHeroVisible] = useState(true);
+  const [isHeroButtonsVisible, setIsHeroButtonsVisible] = useState(true);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const location = useLocation();
   const { theme, setTheme, palette, setPalette, availablePalettes } = useTheme();
@@ -22,22 +23,46 @@ export function Navbar() {
   }, []);
 
   useEffect(() => {
+    let nameObserver: IntersectionObserver;
+    let buttonsObserver: IntersectionObserver;
+    
     const checkAndObserve = () => {
-      const target = document.getElementById('hero-section');
-      if (target) {
-        const observer = new IntersectionObserver(
-          ([entry]) => setIsHeroVisible(entry.isIntersecting),
-          { threshold: 0.1 }
+      const nameTarget = document.getElementById('hero-name');
+      if (nameTarget) {
+        nameObserver = new IntersectionObserver(
+          ([entry]) => {
+            setIsHeroVisible(entry.isIntersecting);
+            if (entry.isIntersecting) {
+              setIsSheetOpen(false); // Auto-close sheet when scrolling back to top
+            }
+          },
+          { threshold: 0 }
         );
-        observer.observe(target);
-        return () => observer.disconnect();
+        nameObserver.observe(nameTarget);
       } else {
         setIsHeroVisible(false);
-        return () => {};
+      }
+
+      const buttonsTarget = document.getElementById('hero-action-buttons');
+      if (buttonsTarget) {
+        buttonsObserver = new IntersectionObserver(
+          ([entry]) => {
+            setIsHeroButtonsVisible(entry.isIntersecting);
+          },
+          { threshold: 0 }
+        );
+        buttonsObserver.observe(buttonsTarget);
+      } else {
+        setIsHeroButtonsVisible(false);
       }
     };
+    
     const timeout = setTimeout(checkAndObserve, 100);
-    return () => clearTimeout(timeout);
+    return () => {
+      clearTimeout(timeout);
+      if (nameObserver) nameObserver.disconnect();
+      if (buttonsObserver) buttonsObserver.disconnect();
+    };
   }, [location.pathname]);
 
   useEffect(() => {
@@ -75,9 +100,9 @@ export function Navbar() {
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ type: "spring", stiffness: 300, damping: 25 }}
                 onClick={() => setIsSheetOpen((prev) => !prev)}
-                className="text-xl font-display font-bold tracking-tight text-text-main flex items-center gap-2 hover:opacity-80 transition-opacity"
+                className="text-lg md:text-xl font-display font-bold tracking-tight text-text-main flex items-center gap-2 hover:opacity-80 transition-opacity max-w-[65vw] md:max-w-none"
               >
-                <div className="relative w-8 h-8 rounded-full overflow-hidden border border-primary/20 bg-surface flex items-center justify-center block z-10">
+                <div className="relative w-8 h-8 rounded-full overflow-hidden border border-primary/20 bg-surface flex items-center justify-center shrink-0 z-10">
                   <img 
                     src="https://i.imgur.com/JyGRmNR.gif"
                     alt="Avatar"
@@ -85,13 +110,34 @@ export function Navbar() {
                     referrerPolicy="no-referrer"
                   />
                 </div>
-                Patryk <span className="text-gradient">(Saderius)</span> Mroziński
+                <span className="truncate">Patryk <span className="text-gradient">(Saderius)</span> Mroziński</span>
               </motion.button>
             )}
           </AnimatePresence>
         </div>
 
         <div className="hidden md:flex items-center gap-3 justify-end flex-none">
+          <AnimatePresence>
+            {!isHeroButtonsVisible && (
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                className="flex items-center gap-3"
+              >
+                <a href="/resume.pdf" target="_blank" rel="noreferrer" className="text-sm font-medium text-text-muted hover:text-text-main hover:scale-110 transition-all duration-300 px-2">
+                  Resume
+                </a>
+                <a href="https://github.com/Saderius" target="_blank" rel="noreferrer" className="p-2 rounded-full glass glass-hover text-text-muted hover:text-text-main transition-all duration-300">
+                  <Github className="w-5 h-5" />
+                </a>
+                <Link to="/contact" className="px-5 py-2 rounded-full bg-inverted text-inverted-text font-medium hover:opacity-80 transition-colors text-sm">
+                  Contact Me
+                </Link>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           <button
             onClick={cyclePalette}
             className="p-2 rounded-full glass glass-hover text-text-muted hover:text-text-main transition-all duration-300"
@@ -106,15 +152,6 @@ export function Navbar() {
           >
             {theme === 'dark' ? <Moon className="w-5 h-5" /> : theme === 'light' ? <Sun className="w-5 h-5" /> : <Monitor className="w-5 h-5" />}
           </button>
-          <a href="/resume.pdf" target="_blank" rel="noreferrer" className="text-sm font-medium text-text-muted hover:text-text-main hover:scale-110 transition-all duration-300 px-2">
-            Resume
-          </a>
-          <a href="https://github.com/Saderius" target="_blank" rel="noreferrer" className="p-2 rounded-full glass glass-hover text-text-muted hover:text-text-main transition-all duration-300">
-            <Github className="w-5 h-5" />
-          </a>
-          <Link to="/contact" className="px-5 py-2 rounded-full bg-inverted text-inverted-text font-medium hover:opacity-80 transition-colors text-sm">
-            Contact Me
-          </Link>
         </div>
 
         {/* Mobile Menu Actions */}

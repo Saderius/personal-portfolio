@@ -98,7 +98,8 @@ export function Home() {
           </motion.div>
           
           <motion.h1 
-            className="text-4xl md:text-6xl font-display font-bold tracking-tight mb-2 text-text-main"
+            id="hero-name"
+            className="text-3xl sm:text-4xl md:text-6xl font-display font-bold tracking-tight mb-3 md:mb-2 text-text-main leading-snug md:leading-tight"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ 
@@ -113,7 +114,7 @@ export function Home() {
           </motion.h1>
 
           <motion.h2 
-            className="text-5xl md:text-7xl font-display font-bold tracking-tight mb-6 text-text-main"
+            className="text-4xl sm:text-5xl md:text-7xl font-display font-bold tracking-tight mb-6 md:mb-8 text-text-main leading-tight md:leading-none"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
@@ -131,6 +132,7 @@ export function Home() {
           </motion.p>
           
           <motion.div 
+            id="hero-action-buttons"
             className="flex flex-col sm:flex-row items-center justify-center gap-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
