@@ -125,9 +125,12 @@ export function Navbar() {
                 exit={{ opacity: 0, x: 20 }}
                 className="flex items-center gap-3"
               >
-                <a href="/resume.pdf" target="_blank" rel="noreferrer" className="text-sm font-medium text-text-muted hover:text-text-main hover:scale-110 transition-all duration-300 px-2">
+                <button 
+                  onClick={() => window.dispatchEvent(new CustomEvent('open-resume'))}
+                  className="text-sm font-medium text-text-muted hover:text-text-main hover:scale-110 transition-all duration-300 px-2 cursor-pointer"
+                >
                   Resume
-                </a>
+                </button>
                 <a href="https://github.com/Saderius" target="_blank" rel="noreferrer" className="p-2 rounded-full glass glass-hover text-text-muted hover:text-text-main transition-all duration-300">
                   <Github className="w-5 h-5" />
                 </a>

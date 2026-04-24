@@ -141,11 +141,11 @@ export function Home() {
             <Link to="/contact">
               <Button size="lg" className="w-full sm:w-auto">Get in touch</Button>
             </Link>
-            <a href="/resume.pdf" target="_blank" rel="noreferrer">
+            <button onClick={() => window.dispatchEvent(new CustomEvent('open-resume'))}>
               <Button variant="glass" size="lg" className="w-full sm:w-auto">
                 View Resume
               </Button>
-            </a>
+            </button>
             <a href="https://github.com/Saderius" target="_blank" rel="noreferrer">
               <Button variant="glass" size="lg" className="w-full sm:w-auto gap-2">
                 <ArrowRight className="w-4 h-4" /> GitHub

@@ -6,12 +6,14 @@ import { Home } from './pages/Home';
 import { Category } from './pages/Category';
 import { Contact } from './pages/Contact';
 import { ThemeProvider } from './components/ThemeProvider';
+import { ResumeModal } from './components/ResumeModal';
 
 export default function App() {
   return (
     <ThemeProvider defaultTheme="system" storageKey="saderius-theme">
       <Router>
         <Background />
+        <ResumeModal />
         <div className="min-h-screen flex flex-col relative z-10">
           <Navbar />
           <main className="flex-1">
