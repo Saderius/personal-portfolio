@@ -58,15 +58,31 @@ export function ResumeModal() {
                 Interactive Resume
               </h2>
               <div className="flex items-center gap-2 sm:gap-3">
-                <a href="https://saderius.github.io/CV-interactive/" target="_blank" rel="noreferrer" title="Open in new tab">
-                   <Button variant="outline" size="sm" className="hidden sm:flex gap-2">
-                     <ExternalLink className="w-4 h-4" />
-                     <span>Open full screen</span>
-                   </Button>
-                   <Button variant="outline" size="sm" className="flex sm:hidden p-2">
-                     <ExternalLink className="w-4 h-4" />
-                   </Button>
-                </a>
+                <Button 
+                  as="a"
+                  href="https://saderius.github.io/CV-interactive/" 
+                  target="_blank" 
+                  rel="noreferrer" 
+                  title="Open in new tab"
+                  variant="outline" 
+                  size="sm" 
+                  className="hidden sm:flex gap-2"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                  <span>Open full screen</span>
+                </Button>
+                <Button 
+                  as="a"
+                  href="https://saderius.github.io/CV-interactive/" 
+                  target="_blank" 
+                  rel="noreferrer" 
+                  title="Open in new tab"
+                  variant="outline" 
+                  size="sm" 
+                  className="flex sm:hidden p-2"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                </Button>
                 <button 
                   onClick={() => setIsOpen(false)}
                   className="p-2 rounded-full glass glass-hover text-text-muted hover:text-text-main transition-all duration-300 bg-surface/50"

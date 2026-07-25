@@ -1,7 +1,10 @@
 ---
+restricted: true
+
 title: "Agony"
 description: "A first-person survival horror set in hell. Contributed as a Manual QA Tester."
 category: "games"
+
 link: "https://store.steampowered.com/app/487720/Agony/"
 tags: ["Manual QA Tester", "Horror", "Survival"]
 featured: false

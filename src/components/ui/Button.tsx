@@ -5,13 +5,18 @@ export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'default' | 'outline' | 'ghost' | 'glass';
   size?: 'default' | 'sm' | 'lg' | 'icon';
+  as?: 'button' | 'a';
+  href?: string;
+  target?: string;
+  rel?: string;
 }
 
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant = 'default', size = 'default', ...props }, ref) => {
+const Button = React.forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(
+  ({ className, variant = 'default', size = 'default', as = 'button', ...props }, ref) => {
+    const Comp = as;
     return (
-      <button
-        ref={ref}
+      <Comp
+        ref={ref as any}
         className={cn(
           "inline-flex items-center justify-center whitespace-nowrap rounded-full text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:pointer-events-none disabled:opacity-50",
           {
@@ -26,7 +31,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           },
           className
         )}
-        {...props}
+        {...(props as any)}
       />
     )
   }

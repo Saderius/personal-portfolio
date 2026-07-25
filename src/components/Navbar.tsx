@@ -221,7 +221,7 @@ export function Navbar() {
               </h2>
 
               <p className="text-sm text-text-muted leading-relaxed">
-                A versatile QA Lead, Designer, and Developer bridging the gap between creative vision and technical execution. I craft flawless interactive experiences and games, driving top-tier quality in hit titles like House Flipper and Agony.
+                A versatile QA Lead, Designer, and Developer bridging the gap between creative vision and technical execution. I craft flawless interactive experiences and games, driving top-tier quality in hit titles like House Flipper and Car Mechanic Simulator.
               </p>
             </div>
           </motion.div>

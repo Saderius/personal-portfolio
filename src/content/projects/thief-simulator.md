@@ -1,4 +1,5 @@
 ---
+
 status: "concluded"
 title: "Thief Simulator"
 description: "Become the best thief. Gather intel, steal things and sell them to buy hi-tech equipment. Contributed as a Manual QA Tester."

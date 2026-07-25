@@ -1,8 +1,11 @@
 ---
+restricted: true
+
 status: "concluded"
 title: "SUCCUBUS"
 description: "An action-oriented horror game. Contributed as QA Lead, ensuring a high-quality experience."
 category: "games"
+
 link: "https://store.steampowered.com/app/985830/SUCCUBUS/"
 tags: ["QA Lead", "Action", "Horror"]
 featured: true

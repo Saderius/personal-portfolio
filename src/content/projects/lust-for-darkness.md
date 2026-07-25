@@ -1,7 +1,10 @@
 ---
+restricted: true
+
 title: "Lust for Darkness"
 description: "A psychological horror of seeking satisfaction on the border of two intertwining worlds. Contributed as a Manual QA Tester."
 category: "games"
+
 link: "https://store.steampowered.com/app/523650/Lust_for_Darkness/"
 tags: ["Manual QA Tester", "Horror", "Adventure"]
 featured: false

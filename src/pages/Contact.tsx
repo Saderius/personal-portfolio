@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Mail, Send, MapPin, Linkedin, Github, Facebook, Instagram } from 'lucide-react';
 import { Button } from '@/src/components/ui/Button';
+import { SeoHead } from '@/src/components/SeoHead';
 
 export function Contact() {
   const [formData, setFormData] = useState({
@@ -26,6 +27,11 @@ export function Contact() {
 
   return (
     <div className="pt-32 pb-20 container mx-auto px-4 md:px-6 max-w-5xl">
+      <SeoHead 
+        title="Contact Patryk Mroziński | Game Developer & UI/UX Designer"
+        description="Get in touch with Patryk Mroziński (Saderius) for Game Development, UI/UX Design, or Wear OS projects. Available for worldwide collaborations."
+        url="https://saderius.com/contact"
+      />
       <div className="text-center mb-16">
         <h1 className="text-4xl md:text-5xl font-display font-bold mb-4 text-text-main">Let's work together</h1>
         <p className="text-xl text-text-muted max-w-2xl mx-auto">

@@ -12,6 +12,7 @@ export interface Project {
   github?: string;
   tags: string[];
   featured?: boolean;
+  restricted?: boolean;
   date?: string;
   status?: 'active' | 'concluded';
 }
